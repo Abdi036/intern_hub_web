@@ -1,9 +1,23 @@
+"use client"
 import React from "react";
 import Button from "./Button";
 import { GraduationCap } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "../_context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  const handleSigninClick = () => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    } else {
+      router.push("/auth/signin");
+    }
+  };
+
   return (
     <header className="font-bold sticky top-0 z-50 w-full border-b border-b-secondary bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-5">
@@ -40,9 +54,7 @@ export default function Navbar() {
           </Link>
         </nav>
         <div className="flex items-center gap-4">
-          <Link href="/auth/signin">
-            <Button text="Signin" />
-          </Link>
+          <Button text={isAuthenticated ? "Dashboard" : "Signin"} onClick={handleSigninClick} />
         </div>
       </div>
     </header>

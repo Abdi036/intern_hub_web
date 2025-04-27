@@ -14,6 +14,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
+  setError: (error: string | null) => void;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (
     name: string,
@@ -51,7 +52,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await authApi.signIn(email, password);
       setIsAuthenticated(true);
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Failed to sign in");
+      console.log("error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to sign in";
+      setError(errorMessage);
       throw error;
     } finally {
       setLoading(false);
@@ -66,12 +70,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     role: string
   ) => {
     try {
+      setLoading(true);
       setError(null);
       await authApi.signUp(name, email, password, role);
       setIsAuthenticated(true);
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Failed to sign up");
+      console.log("error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to sign up";
+      setError(errorMessage);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,7 +93,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, loading, error, signIn, signUp, signOut }}
+      value={{
+        isAuthenticated,
+        loading,
+        error,
+        signIn,
+        signUp,
+        signOut,
+        setError,
+      }}
     >
       {children}
     </AuthContext.Provider>

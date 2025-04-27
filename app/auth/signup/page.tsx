@@ -2,11 +2,11 @@
 import Link from "next/link";
 import { Building, ArrowLeft, GraduationCap } from "lucide-react";
 import { useAuth } from "../../_context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Signup() {
-  const { signUp, loading, error } = useAuth();
+  const { signUp, loading, error,setError } = useAuth();
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
@@ -14,6 +14,17 @@ export default function Signup() {
     password: "",
     role: "",
   });
+  const [showError, setShowError] = useState(false);
+
+  useEffect(() => {
+    if (error) {
+      setShowError(true);
+      const timer = setTimeout(() => {
+        setShowError(false);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -152,7 +163,22 @@ export default function Signup() {
               </div>
             </div>
 
-            {/* Submit Button */}
+            <div
+              className={`relative overflow-hidden ${
+                showError ? "h-12" : "h-0"
+              } transition-all duration-300 ease-in-out`}
+            >
+              {error && (
+                <div
+                  className={`p-3 bg-red-50 border border-red-200 rounded-md transform transition-transform duration-300 ${
+                    showError ? "translate-y-0" : "translate-y-full"
+                  }`}
+                >
+                  <p className="text-red-600 text-sm text-center">{error}</p>
+                </div>
+              )}
+            </div>
+
             <button
               type="submit"
               disabled={loading}
@@ -162,17 +188,11 @@ export default function Signup() {
             </button>
           </form>
 
-          {/* Error Message */}
-          {error && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-600 text-sm text-center">{error}</p>
-            </div>
-          )}
-
           <p className="mt-5 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
-              href="/auth/signin"
+             onClick={() => setError(null)}
+              href={`/auth/signin`}
               className="font-medium text-primary hover:underline underline-offset-4"
             >
               Sign in

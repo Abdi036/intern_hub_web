@@ -67,10 +67,12 @@ export function DashboardSidebar({
   return (
     <aside className="flex h-screen flex-col w-64 border-r border-slate-700 bg-card">
       {/* Header */}
-      <div className="flex items-center justify-center border-b border-slate-700 px-4 py-6 gap-2 font-bold text-xl text-primary">
-        <GraduationCap className="h-6 w-6" />
-        <span>InternHub</span>
-      </div>
+      <Link href="/">
+        <div className="flex items-center justify-center border-b border-slate-700 px-4 py-6 gap-2 font-bold text-xl text-primary">
+          <GraduationCap className="h-6 w-6" />
+          <span>InternHub</span>
+        </div>
+      </Link>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 py-6">

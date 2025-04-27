@@ -11,6 +11,28 @@ const api = axios.create({
   },
 });
 
+// Add response interceptor to handle errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      const errorMessage =
+        error.response.data?.message ||
+        error.response.data?.error ||
+        "An error occurred";
+      return Promise.reject(new Error(errorMessage));
+    } else if (error.request) {
+      // The request was made but no response was received
+      return Promise.reject(new Error("No response from server"));
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      return Promise.reject(new Error("Request failed"));
+    }
+  }
+);
+
 // Automatically attach token to every request if available
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");

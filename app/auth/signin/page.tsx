@@ -3,13 +3,24 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/app/_context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Signin() {
-  const { signIn, loading, error } = useAuth();
+  const { signIn, loading, error, setError } = useAuth();
   const router = useRouter();
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showError, setShowError] = useState(false);
+
+  useEffect(() => {
+    if (error) {
+      setShowError(true);
+      const timer = setTimeout(() => {
+        setShowError(false);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -97,11 +108,21 @@ export default function Signin() {
               />
             </div>
 
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-red-600 text-sm text-center">{error}</p>
-              </div>
-            )}
+            <div
+              className={`relative overflow-hidden ${
+                showError ? "h-12" : "h-0"
+              } transition-all duration-300 ease-in-out`}
+            >
+              {error && (
+                <div
+                  className={`p-3 bg-red-50 border border-red-200 rounded-md transform transition-transform duration-300 ${
+                    showError ? "translate-y-0" : "translate-y-full"
+                  }`}
+                >
+                  <p className="text-red-600 text-sm text-center">{error}</p>
+                </div>
+              )}
+            </div>
 
             <button
               type="submit"
@@ -115,6 +136,7 @@ export default function Signin() {
           <p className="mt-10 text-center text-sm text-gray-500">
             Don&apos;t have an account?{" "}
             <Link
+              onClick={() => setError(null)}
               href="/auth/signup"
               className="font-medium text-primary hover:underline underline-offset-4"
             >
