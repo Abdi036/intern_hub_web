@@ -16,43 +16,46 @@ export default function Hero() {
     <main className="flex-1">
       <section
         id="home"
-        className="w-full py-12 md:py-24 lg:py-32 xl:py-24 bg-gradient-to-b from-background to-muted"
+        className="relative w-full min-h-[100vh] flex items-center justify-center overflow-hidden"
       >
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-            <div className="flex flex-col justify-center space-y-4">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                  Find Your Perfect Internship Match
-                </h1>
-                <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                  InternHub connects talented students with leading companies
-                  for meaningful internship opportunities that launch careers.
-                </p>
-              </div>
-              <div className="flex flex-col gap-2 min-[400px]:flex-row ">
-                <Link href="/auth/signup?role=company">
-                  <Button text="Get Started" />
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/pexels-fauxels-3183150.jpg"
+            fill
+            alt="Students finding internships"
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
+
+        {/* Content */}
+        <div className="container relative z-10 px-4 md:px-6">
+          <div className="max-w-3xl mx-auto text-center text-white">
+            <div className="space-y-6">
+              <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none">
+                Find Your Perfect Internship Match
+              </h1>
+              <p className="max-w-[600px] mx-auto text-lg md:text-xl text-gray-200">
+                InternHub connects talented students with leading companies for
+                meaningful internship opportunities that launch careers.
+              </p>
+              <div className="flex flex-col gap-4 min-[400px]:flex-row justify-center">
+                <Link href="/auth/signin">
+                  <Button text="Explore Opportunities" />
                 </Link>
               </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Users className="h-4 w-4" />
+              <div className="flex items-center justify-center gap-8 text-sm text-gray-200">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
                   <span>10,000+ Students</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Building className="h-4 w-4" />
+                <div className="flex items-center gap-2">
+                  <Building className="h-5 w-5" />
                   <span>500+ Companies</span>
                 </div>
               </div>
-            </div>
-            <div className="relative h-100 w-full">
-              <Image
-                src="/pexels-fauxels-3183150.jpg"
-                fill
-                alt="Students finding internships"
-                className="mx-auto aspect-square overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
-              />
             </div>
           </div>
         </div>

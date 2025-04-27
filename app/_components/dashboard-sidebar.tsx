@@ -9,9 +9,8 @@ import {
   GraduationCap,
   Home,
   LogOut,
-  Settings,
   User,
-  Users,
+  Plus,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -27,7 +26,8 @@ export function DashboardSidebar({
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const studentMenuItems = [
+  const allMenuItems = [
+    // Student menu items
     { title: "Dashboard", href: "/dashboard", icon: Home },
     {
       title: "Browse Internships",
@@ -39,44 +39,23 @@ export function DashboardSidebar({
       href: "/dashboard/applications",
       icon: FileText,
     },
-    { title: "Profile", href: "/dashboard/profile", icon: User },
-    { title: "Settings", href: "/dashboard/settings", icon: Settings },
-  ];
 
-  const companyMenuItems = [
-    { title: "Dashboard", href: "/dashboard", icon: Home },
+    // Company menu items
     {
       title: "Post Internship",
-      href: "/dashboard/post-internship",
-      icon: FileText,
+      href: "/dashboard/post-Internship",
+      icon: Plus,
     },
     {
-      title: "Manage Internships",
-      href: "/dashboard/manage-internships",
+      title: "My Internships",
+      href: "/dashboard/my-internships",
       icon: Building,
     },
-    { title: "Applicants", href: "/dashboard/applicants", icon: Users },
-    { title: "Company Profile", href: "/dashboard/profile", icon: User },
-    { title: "Settings", href: "/dashboard/settings", icon: Settings },
+
+    { title: "Profile", href: "/dashboard/profile", icon: User },
   ];
 
-  const adminMenuItems = [
-    { title: "Dashboard", href: "/dashboard", icon: Home },
-    { title: "Manage Users", href: "/dashboard/users", icon: Users },
-    {
-      title: "Manage Internships",
-      href: "/dashboard/internships",
-      icon: Building,
-    },
-    { title: "Settings", href: "/dashboard/settings", icon: Settings },
-  ];
-
-  const menuItems =
-    userRole === "student"
-      ? studentMenuItems
-      : userRole === "company"
-      ? companyMenuItems
-      : adminMenuItems;
+  const menuItems = allMenuItems;
 
   const userInitials = userName
     .split(" ")
@@ -88,21 +67,13 @@ export function DashboardSidebar({
   return (
     <aside className="flex h-screen flex-col w-64 border-r border-slate-700 bg-card">
       {/* Header */}
-      <div className="flex items-center justify-center border-b border-slate-700 px-4 py-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2 font-bold text-xl text-primary"
-        >
-          <GraduationCap className="h-6 w-6" />
-          <span>InternHub</span>
-        </Link>
+      <div className="flex items-center justify-center border-b border-slate-700 px-4 py-6 gap-2 font-bold text-xl text-primary">
+        <GraduationCap className="h-6 w-6" />
+        <span>InternHub</span>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
-        <div className="mb-4 text-xs font-semibold text-gray-500 uppercase">
-          Navigation
-        </div>
         <ul className="space-y-1">
           {menuItems.map((item) => (
             <li key={item.title}>
@@ -155,13 +126,7 @@ export function DashboardSidebar({
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </Link>
-                  <Link
-                    href="/dashboard/settings"
-                    className="flex items-center px-4 py-2 text-sm text-white hover:bg-slate-500"
-                  >
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </Link>
+
                   <Link
                     href="/auth/signin"
                     className="flex items-center px-4 py-2 text-sm text-white hover:bg-slate-500"

@@ -1,6 +1,6 @@
 "use client";
 
-import { Building, FileText, Search, Users } from "lucide-react";
+import { FileText, Users } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardPage() {
@@ -28,12 +28,7 @@ export default function DashboardPage() {
             change: "+1 since last week",
             Icon: Users,
           },
-          {
-            title: "Interviews",
-            value: 3,
-            change: "+2 since last month",
-            Icon: Building,
-          },
+
           {
             title: "Offers",
             value: 1,
@@ -52,8 +47,8 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Applications and Recommended Internships */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+      {/* Applications */}
+      <div className=" md:grid-cols-2 lg:grid-cols-7">
         {/* Recent Applications */}
         <div className="bg-card p-6 rounded-lg shadow-md col-span-4">
           <div className="mb-4">
@@ -89,43 +84,6 @@ export default function DashboardPage() {
               className="text-sm text-blue-600 hover:underline"
             >
               View all applications
-            </Link>
-          </div>
-        </div>
-
-        {/* Recommended Internships */}
-        <div className="bg-card p-6 rounded-lg shadow-md col-span-3">
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold">Recommended Internships</h2>
-            <p className="text-sm text-gray-400">
-              Based on your profile and preferences
-            </p>
-          </div>
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
-              >
-                <div>
-                  <p className="font-medium">UX Design Intern</p>
-                  <p className="text-sm text-gray-400">
-                    Creative Solutions LLC
-                  </p>
-                </div>
-                <button className="text-sm border border-gray-300 rounded-md px-3 py-1 hover:bg-gray-100">
-                  Apply
-                </button>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 flex justify-end">
-            <Link
-              href="/dashboard/internships"
-              className="flex items-center text-sm border border-gray-300 rounded-md px-3 py-1 hover:bg-gray-100"
-            >
-              Browse more
-              <Search className="h-4 w-4 ml-2" />
             </Link>
           </div>
         </div>
