@@ -1,3 +1,4 @@
+import { AuthProvider } from "./_context/AuthContext";
 import "./globals.css";
 import { Josefin_Sans } from "next/font/google";
 
@@ -24,7 +25,7 @@ export default function RootLayout({
       <body
         className={`${josefin.className} min-h-screen relative bg-gray-900 text-white`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

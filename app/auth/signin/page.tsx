@@ -1,7 +1,34 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useAuth } from "@/app/_context/AuthContext";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Signin() {
+  const { signIn, loading, error } = useAuth();
+  const router = useRouter();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await signIn(formData.email, formData.password);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -21,7 +48,7 @@ export default function Signin() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label
                 htmlFor="email"
@@ -35,6 +62,8 @@ export default function Signin() {
                 type="email"
                 autoComplete="email"
                 required
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Enter your email"
                 className="block w-full rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 sm:text-sm"
               />
@@ -61,16 +90,25 @@ export default function Signin() {
                 type="password"
                 autoComplete="current-password"
                 required
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="Enter your password"
                 className="block w-full rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 sm:text-sm"
               />
             </div>
 
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-600 text-sm text-center">{error}</p>
+              </div>
+            )}
+
             <button
               type="submit"
-              className="w-full rounded-md bg-primary px-4 py-2 text-white font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              disabled={loading}
+              className="w-full rounded-md bg-primary px-4 py-2 text-white font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 

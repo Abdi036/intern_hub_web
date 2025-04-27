@@ -1,9 +1,43 @@
 "use client";
 import Link from "next/link";
 import { Building, ArrowLeft, GraduationCap } from "lucide-react";
+import { useAuth } from "../../_context/AuthContext";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
-  const role = "";
+  const { signUp, loading, error } = useAuth();
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await signUp(
+        formData.name,
+        formData.email,
+        formData.password,
+        formData.role
+      );
+      router.push("/auth/signin");
+    } catch (error) {
+      console.error("Signup failed:", error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -23,7 +57,7 @@ export default function Signup() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Full Name */}
             <div className="space-y-2">
               <label htmlFor="name" className="block text-sm font-medium">
@@ -35,6 +69,8 @@ export default function Signup() {
                 type="text"
                 autoComplete="name"
                 required
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Enter your full name"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
               />
@@ -51,6 +87,8 @@ export default function Signup() {
                 type="email"
                 autoComplete="email"
                 required
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Enter your email"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
               />
@@ -67,6 +105,8 @@ export default function Signup() {
                 type="password"
                 autoComplete="new-password"
                 required
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="Create a password"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
               />
@@ -83,8 +123,8 @@ export default function Signup() {
                     id="student"
                     name="role"
                     value="student"
-                    checked={role === ""}
-                    onChange={() => {}}
+                    checked={formData.role === "student"}
+                    onChange={handleChange}
                     className="h-4 w-4 text-primary focus:ring-primary"
                   />
                   <span className="flex items-center gap-1 text-sm font-medium">
@@ -100,8 +140,8 @@ export default function Signup() {
                     id="company"
                     name="role"
                     value="company"
-                    checked={role === ""}
-                    onChange={() => {}}
+                    checked={formData.role === "company"}
+                    onChange={handleChange}
                     className="h-4 w-4 text-primary focus:ring-primary"
                   />
                   <span className="flex items-center gap-1 text-sm font-medium">
@@ -115,11 +155,19 @@ export default function Signup() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full rounded-md bg-primary px-4 py-2 text-white font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              disabled={loading}
+              className="w-full rounded-md bg-primary px-4 py-2 text-white font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign up
+              {loading ? "Signing up..." : "Sign up"}
             </button>
           </form>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-red-600 text-sm text-center">{error}</p>
+            </div>
+          )}
 
           <p className="mt-5 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
