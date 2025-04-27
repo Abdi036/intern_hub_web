@@ -1,5 +1,4 @@
 import "./globals.css";
-
 import { Josefin_Sans } from "next/font/google";
 
 const josefin = Josefin_Sans({
@@ -22,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${josefin.className} min-h-screen relative `}>
+      <body
+        className={`${josefin.className} min-h-screen relative bg-gray-900 text-white`}
+      >
         {children}
       </body>
     </html>
