@@ -26,6 +26,15 @@ interface AuthContextType {
   userData: User | null;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, password: string) => Promise<void>;
+  updatePersonalInfo: (
+    newEmail: string,
+    newName: string,
+    newPhoto: string
+  ) => Promise<void>;
+  updatePassword: (
+    currentPassword: string,
+    newPassword: string
+  ) => Promise<void>;
 }
 
 // Create the context
@@ -78,6 +87,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Sign in function
+  // const signIn = async (email: string, password: string) => {
+  //   try {
+  //     setLoading(true);
+  //     setError(null);
+  //     const response = await authApi.signIn(email, password);
+  //     const userData = {
+  //       ...response.data,
+  //       photo: response.data.photo || null,
+  //     };
+  //     setUserData(userData);
+  //     const { name, email: userEmail, role, photo } = userData;
+  //     localStorage.setItem(
+  //       "userData",
+  //       JSON.stringify({ name, userEmail, role, photo })
+  //     );
+  //     setIsAuthenticated(true);
+  //   } catch (error) {
+  //     const errorMessage =
+  //       error instanceof Error ? error.message : "Failed to sign in";
+  //     setError(errorMessage);
+  //     throw error;
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
@@ -88,8 +122,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         photo: response.data.photo || null,
       };
       setUserData(userData);
-      const { name, role, photo } = userData;
-      localStorage.setItem("userData", JSON.stringify({ name, role, photo }));
+      const { name, email: userEmail, role, photo } = userData;
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({ name, email: userEmail, role, photo })
+      );
       setIsAuthenticated(true);
     } catch (error) {
       const errorMessage =
@@ -141,6 +178,68 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Update personal info function
+  const updatePersonalInfo = async (
+    newEmail: string,
+    newName: string,
+    newPhoto: string
+  ) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await authApi.updatePersonalInfo(newName, newEmail, newPhoto);
+
+      // Update userData state
+      const updatedUserData: User = {
+        _id: userData?._id || "",
+        name: newName,
+        email: newEmail,
+        role: userData?.role || "",
+        photo: newPhoto || userData?.photo || "default-user.jpg",
+      };
+      setUserData(updatedUserData);
+
+      // Update localStorage
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          name: newName,
+          email: newEmail,
+          role: userData?.role || "",
+          photo: newPhoto || userData?.photo || "default-user.jpg",
+        })
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to update personal info";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update password function
+  const updatePassword = async (
+    currentPassword: string,
+    newPassword: string
+  ) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await authApi.updatePassword(currentPassword, newPassword);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update password";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -154,6 +253,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         userData,
         forgotPassword,
         resetPassword,
+        updatePersonalInfo,
+        updatePassword,
       }}
     >
       {children}

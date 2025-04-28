@@ -77,7 +77,7 @@ export function DashboardSidebar({
       icon: Building,
     },
 
-    { title: "Profile", href: "/dashboard/profile", icon: User },
+    { title: "Profile", href: "/dashboard/profile/personal", icon: User },
   ];
 
   const menuItems = allMenuItems;

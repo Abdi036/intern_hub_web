@@ -133,4 +133,24 @@ export const authApi = {
     );
     return data;
   },
+
+  async updatePersonalInfo(name: string, email: string, photo: string) {
+    const { data } = await api.patch<ApiResponse<null>>("user/update-me", {
+      name,
+      email,
+      photo,
+    });
+    return data;
+  },
+
+  async updatePassword(currentPassword: string, newPassword: string) {
+    const { data } = await api.patch<ApiResponse<null>>(
+      "user/update-password",
+      {
+        currentPassword,
+        newPassword,
+      }
+    );
+    return data;
+  },
 };
