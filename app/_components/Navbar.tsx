@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import Button from "./Button";
 import { GraduationCap } from "lucide-react";
@@ -54,7 +54,10 @@ export default function Navbar() {
           </Link>
         </nav>
         <div className="flex items-center gap-4">
-          <Button text={isAuthenticated ? "Dashboard" : "Signin"} onClick={handleSigninClick} />
+          <Button
+            text={isAuthenticated ? "Dashboard" : "Signin"}
+            onClick={handleSigninClick}
+          />
         </div>
       </div>
     </header>

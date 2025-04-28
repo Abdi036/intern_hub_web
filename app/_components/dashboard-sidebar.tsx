@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Building,
   ChevronDown,
@@ -13,18 +14,44 @@ import {
   Plus,
 } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "../_context/AuthContext";
+import Image from "next/image";
 
 interface DashboardSidebarProps {
   userRole: "student" | "company" | "admin";
   userName: string;
+  userPhoto?: string;
 }
 
 export function DashboardSidebar({
   userRole,
   userName,
+  userPhoto,
 }: DashboardSidebarProps) {
+  const { signOut, userData } = useAuth();
+  const router = useRouter();
+
+  console.log(userData);
+
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleSignOut = () => {
+    signOut();
+    router.push("/auth/signin");
+  };
+
+  const userInitials = userName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .substring(0, 2);
+
+  const profilePhoto =
+    userPhoto !== "default-user.jpg"
+      ? `https://intern-hub-server.onrender.com/images/users/${userPhoto}`
+      : `https://intern-hub-server.onrender.com/images/users/default-user.jpg`;
 
   const allMenuItems = [
     // Student menu items
@@ -56,13 +83,6 @@ export function DashboardSidebar({
   ];
 
   const menuItems = allMenuItems;
-
-  const userInitials = userName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .substring(0, 2);
 
   return (
     <aside className="flex h-screen flex-col w-64 border-r border-slate-700 bg-card">
@@ -99,9 +119,20 @@ export function DashboardSidebar({
       <div className="border-t border-slate-700 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 text-sm font-bold">
-              {userInitials}
-            </div>
+            {profilePhoto ? (
+              <Image
+                src={profilePhoto}
+                alt={userName}
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full object-cover"
+              />
+            ) : (
+              <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 text-sm font-bold">
+                {userInitials}
+              </div>
+            )}
+
             <div className="flex flex-col">
               <span className="text-sm font-medium">{userName}</span>
               <span className="text-xs text-gray-500 capitalize">
@@ -130,6 +161,7 @@ export function DashboardSidebar({
                   </Link>
 
                   <Link
+                    onClick={handleSignOut}
                     href="/auth/signin"
                     className="flex items-center px-4 py-2 text-sm text-white hover:bg-slate-500"
                   >

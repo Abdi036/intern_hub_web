@@ -49,7 +49,7 @@ export interface User {
   name: string;
   email: string;
   role: string;
-  photo?: string;
+  photo?: string | null;
 }
 
 // Response wrapper type
