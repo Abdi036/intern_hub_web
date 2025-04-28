@@ -28,10 +28,8 @@ export function DashboardSidebar({
   userName,
   userPhoto,
 }: DashboardSidebarProps) {
-  const { signOut, userData } = useAuth();
+  const { signOut } = useAuth();
   const router = useRouter();
-
-  console.log(userData);
 
   const pathname = usePathname();
   const [dropdownOpen, setDropdownOpen] = useState(false);

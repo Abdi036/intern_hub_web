@@ -24,6 +24,8 @@ interface AuthContextType {
   ) => Promise<void>;
   signOut: () => void;
   userData: User | null;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (token: string, password: string) => Promise<void>;
 }
 
 // Create the context
@@ -53,33 +55,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth();
   }, []);
 
-  // Sign in function
-  const signIn = async (email: string, password: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await authApi.signIn(email, password);
-      console.log("API Response photo:", response.data.photo);
-      const userData = {
-        ...response.data,
-        photo: response.data.photo || null,
-      };
-      console.log("UserData photo:", userData.photo);
-      setUserData(userData);
-      // Only store essential data
-      const { name, role, photo } = userData;
-      localStorage.setItem("userData", JSON.stringify({ name, role, photo }));
-      setIsAuthenticated(true);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to sign in";
-      setError(errorMessage);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Sign up function
   const signUp = async (
     name: string,
@@ -93,9 +68,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await authApi.signUp(name, email, password, role);
       setIsAuthenticated(true);
     } catch (error) {
-      console.log("error:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Failed to sign up";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Sign in function
+  const signIn = async (email: string, password: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await authApi.signIn(email, password);
+      const userData = {
+        ...response.data,
+        photo: response.data.photo || null,
+      };
+      setUserData(userData);
+      const { name, role, photo } = userData;
+      localStorage.setItem("userData", JSON.stringify({ name, role, photo }));
+      setIsAuthenticated(true);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to sign in";
       setError(errorMessage);
       throw error;
     } finally {
@@ -111,6 +109,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUserData(null);
   };
 
+  // Forgot password function
+  const forgotPassword = async (email: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await authApi.forgotPassword(email);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to forgot password";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reset password function
+  const resetPassword = async (token: string, password: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await authApi.resetPassword(token, password);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to reset password";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -122,6 +152,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signOut,
         setError,
         userData,
+        forgotPassword,
+        resetPassword,
       }}
     >
       {children}

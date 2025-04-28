@@ -24,7 +24,7 @@ export default function DashboardLayout({
         <DashboardSidebar
           userRole={userData?.role as "student" | "company" | "admin"}
           userName={userData?.name || "User"}
-          userPhoto={userData?.photo || undefined}
+          userPhoto={userData?.photo || "default-user.jpg"}
         />
       </div>
 

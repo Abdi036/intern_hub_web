@@ -110,4 +110,27 @@ export const authApi = {
   signOut() {
     tokenStorage.removeToken();
   },
+
+  // Forgot password
+  async forgotPassword(email: string) {
+    const { data } = await api.post<ApiResponse<null>>(
+      "/user/forgot-password",
+      {
+        email,
+      }
+    );
+    return data;
+  },
+
+  // Reset password
+  async resetPassword(token: string, password: string) {
+    const { data } = await api.patch<ApiResponse<null>>(
+      "/user/reset-password",
+      {
+        token,
+        password,
+      }
+    );
+    return data;
+  },
 };
