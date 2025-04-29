@@ -131,8 +131,9 @@ export default function PersonalInfoPage() {
         <input
           type="email"
           value={email}
+          disabled={true}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full rounded border-2 border-gray-600 p-2 shadow-sm"
+          className="mt-1 block w-full rounded border-2 border-gray-600 p-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           placeholder="email"
         />
       </div>

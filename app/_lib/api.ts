@@ -46,7 +46,7 @@ export interface User {
   name: string;
   email: string;
   role: string;
-  photo: string;
+  photo: string | null;
 }
 
 // Response wrapper type
@@ -132,7 +132,7 @@ export const authApi = {
   },
 
   async updatePersonalInfo(formData: FormData) {
-    const { data } = await api.patch<ApiResponse<null>>(
+    const { data } = await api.patch<ApiResponse<{ photo: string }>>(
       "/user/update-me",
       formData,
       {
