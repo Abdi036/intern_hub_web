@@ -3,6 +3,7 @@
 
 import { useAuth } from "@/app/_context/AuthContext";
 import { useState, useRef, useEffect } from "react";
+import profileImage from "@/public/profile-image.png";
 
 export default function PersonalInfoPage() {
   const { loading, user, updatePersonalInfo, error, setError } = useAuth();
@@ -95,7 +96,12 @@ export default function PersonalInfoPage() {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-200">
-              <span className="text-gray-400">No Image</span>
+              <img
+                src={profileImage.src}
+                alt="Profile"
+                width={100}
+                height={100}
+              />
             </div>
           )}
         </div>
@@ -106,9 +112,7 @@ export default function PersonalInfoPage() {
           className="hidden"
           onChange={handleImageChange}
         />
-        <p className="text-xs text-gray-400 mt-2">
-          Click the photo to upload a new image
-        </p>
+        <p className="text-xs text-gray-400 mt-2">Change your profile photo</p>
       </div>
 
       {/* Full Name */}

@@ -148,10 +148,15 @@ export const authApi = {
     const { data } = await api.patch<ApiResponse<null>>(
       "/user/update-password",
       {
-        currentPassword,
-        newPassword,
+        currentPassword: currentPassword,
+        password: newPassword,
       }
     );
+    return data;
+  },
+
+  async deleteAccount() {
+    const { data } = await api.delete<ApiResponse<null>>("/user/delete-me");
     return data;
   },
 };

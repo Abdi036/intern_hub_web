@@ -31,6 +31,7 @@ interface AuthContextType {
     currentPassword: string,
     newPassword: string
   ) => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 // Create the context
@@ -222,6 +223,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const deleteAccount = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      await authApi.deleteAccount();
+      signOut();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to delete account";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -237,6 +253,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         resetPassword,
         updatePersonalInfo,
         updatePassword,
+        deleteAccount,
       }}
     >
       {children}
