@@ -23,14 +23,10 @@ interface AuthContextType {
     role: string
   ) => Promise<void>;
   signOut: () => void;
-  userData: User | null;
+  user: User | null;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, password: string) => Promise<void>;
-  updatePersonalInfo: (
-    newEmail: string,
-    newName: string,
-    newPhoto: string
-  ) => Promise<void>;
+  updatePersonalInfo: (formData: FormData) => Promise<void>;
   updatePassword: (
     currentPassword: string,
     newPassword: string
@@ -45,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userData, setUserData] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   // Check if user is logged in when the app starts
   useEffect(() => {
@@ -55,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const storedUserData = localStorage.getItem("userData");
         if (storedUserData) {
           const parsedData = JSON.parse(storedUserData);
-          setUserData(parsedData);
+          setUser(parsedData);
         }
       }
       setIsAuthenticated(hasToken);
@@ -121,7 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ...response.data,
         photo: response.data.photo || null,
       };
-      setUserData(userData);
+      setUser(userData);
       const { name, email: userEmail, role, photo } = userData;
       localStorage.setItem(
         "userData",
@@ -143,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     authApi.signOut();
     localStorage.removeItem("userData");
     setIsAuthenticated(false);
-    setUserData(null);
+    setUser(null);
   };
 
   // Forgot password function
@@ -179,36 +175,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Update personal info function
-  const updatePersonalInfo = async (
-    newEmail: string,
-    newName: string,
-    newPhoto: string
-  ) => {
+  const updatePersonalInfo = async (formData: FormData) => {
     try {
       setLoading(true);
       setError(null);
-      await authApi.updatePersonalInfo(newName, newEmail, newPhoto);
 
-      // Update userData state
-      const updatedUserData: User = {
-        _id: userData?._id || "",
-        name: newName,
-        email: newEmail,
-        role: userData?.role || "",
-        photo: newPhoto || userData?.photo || "default-user.jpg",
-      };
-      setUserData(updatedUserData);
+      const response = await authApi.updatePersonalInfo(formData);
 
-      // Update localStorage
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({
-          name: newName,
-          email: newEmail,
-          role: userData?.role || "",
-          photo: newPhoto || userData?.photo || "default-user.jpg",
-        })
-      );
+      // Update the user state with new information
+      setUser((prevUser) => {
+        if (!prevUser) return null;
+        return {
+          ...prevUser,
+          name: (formData.get("name") as string) || prevUser.name,
+          email: (formData.get("email") as string) || prevUser.email,
+          photo: response.data?.photo || prevUser.photo,
+        };
+      });
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -220,7 +203,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   };
-
   // Update password function
   const updatePassword = async (
     currentPassword: string,
@@ -250,7 +232,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signUp,
         signOut,
         setError,
-        userData,
+        user,
         forgotPassword,
         resetPassword,
         updatePersonalInfo,

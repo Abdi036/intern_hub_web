@@ -16,7 +16,7 @@ export default function PasswordUpdatePage() {
             </label>
             <input
               type="password"
-              className="mt-1 block w-full rounded border-gray-200 shadow-sm"
+              className="mt-1 block w-full rounded border-2 border-gray-600 p-2 shadow-sm"
               placeholder="Current Password"
             />
           </div>
@@ -28,7 +28,7 @@ export default function PasswordUpdatePage() {
             </label>
             <input
               type="password"
-              className="mt-1 block w-full rounded border-gray-200 shadow-sm"
+              className="mt-1 block w-full rounded border-2 border-gray-600  p-2 shadow-sm"
               placeholder="New Password"
             />
           </div>

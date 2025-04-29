@@ -151,14 +151,6 @@ export function DashboardSidebar({
               <div className="absolute right-0 bottom-full mb-2 w-40 rounded-md shadow-lg bg-secondary ring-1 ring-black ring-opacity-5 z-10">
                 <div className="py-1">
                   <Link
-                    href="/dashboard/profile"
-                    className="flex items-center px-4 py-2 text-sm text-white hover:bg-slate-500"
-                  >
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
-                  </Link>
-
-                  <Link
                     onClick={handleSignOut}
                     href="/auth/signin"
                     className="flex items-center px-4 py-2 text-sm text-white hover:bg-slate-500"

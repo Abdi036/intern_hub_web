@@ -1,53 +1,108 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useAuth } from "@/app/_context/AuthContext";
-import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function PersonalInfoPage() {
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const { loading, user, updatePersonalInfo, error, setError } = useAuth();
+  const [name, setName] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [photo, setPhoto] = useState(user?.photo || "");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imageError, setImageError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { loading } = useAuth();
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
+  // Update local state when user data changes
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setPhoto(user.photo || "");
+      setImageError(false);
     }
-  };
+  }, [user]);
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhoto(reader.result as string);
+        setImageError(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setError(null);
+      const formData = new FormData();
+
+      // Only append fields that have been changed
+      if (name !== user?.name) formData.append("name", name);
+      if (email !== user?.email) formData.append("email", email);
+      if (selectedFile) formData.append("photo", selectedFile);
+
+      if (
+        formData.has("name") ||
+        formData.has("email") ||
+        formData.has("photo")
+      ) {
+        await updatePersonalInfo(formData);
+      }
+    } catch (error) {
+      console.error("Failed to update personal info:", error);
+    }
+  };
+
+  // Format the photo URL
+  const getPhotoUrl = () => {
+    if (!photo)
+      return "https://intern-hub-server.onrender.com/images/users/default-user.jpg";
+    if (photo.startsWith("data:")) return photo;
+    if (photo === "default-user.jpg")
+      return "https://intern-hub-server.onrender.com/images/users/default-user.jpg";
+    return `https://intern-hub-server.onrender.com/images/users/${photo}`;
+  };
+
   return (
-    <form className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {error && (
+        <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded">
+          {error}
+        </div>
+      )}
+
       <div className="flex flex-col items-center">
         <div
-          className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 cursor-pointer hover:opacity-80 transition-all"
           onClick={handleImageClick}
+          className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 cursor-pointer hover:opacity-80 transition-all"
         >
-          {profileImage ? (
-            <Image
-              src={profileImage}
+          {!imageError ? (
+            <img
+              src={getPhotoUrl()}
               alt="Profile"
-              width={96}
-              height={96}
               className="w-full h-full object-cover"
+              onError={() => setImageError(true)}
             />
           ) : (
-            <div className="flex items-center justify-center w-full h-full text-gray-400 text-sm">
-              Upload
+            <div className="w-full h-full flex items-center justify-center bg-gray-200">
+              <span className="text-gray-400">No Image</span>
             </div>
           )}
         </div>
         <input
+          ref={fileInputRef}
           type="file"
           accept="image/*"
-          ref={fileInputRef}
           className="hidden"
           onChange={handleImageChange}
         />
@@ -65,8 +120,8 @@ export default function PersonalInfoPage() {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 block w-full rounded border-gray-200 shadow-sm"
-          placeholder="John Doe"
+          className="mt-1 block w-full rounded border-2 border-gray-600 p-2 shadow-sm"
+          placeholder="name"
         />
       </div>
 
@@ -77,8 +132,8 @@ export default function PersonalInfoPage() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full rounded border-gray-200 shadow-sm"
-          placeholder="example@email.com"
+          className="mt-1 block w-full rounded border-2 border-gray-600 p-2 shadow-sm"
+          placeholder="email"
         />
       </div>
 

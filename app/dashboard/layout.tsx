@@ -10,7 +10,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { userData } = useAuth();
+  const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
@@ -22,16 +22,16 @@ export default function DashboardLayout({
         } md:block`}
       >
         <DashboardSidebar
-          userRole={userData?.role as "student" | "company" | "admin"}
-          userName={userData?.name || "User"}
-          userPhoto={userData?.photo || "default-user.jpg"}
+          userRole={user?.role as "student" | "company" | "admin"}
+          userName={user?.name || "User"}
+          userPhoto={user?.photo || "default-user.jpg"}
         />
       </div>
 
       {/* Main Area with Sidebar Spacing */}
       <div className="flex flex-1 flex-col md:ml-64">
         <header className="sticky top-0 z-10 flex h-16 items-center justify-between bg-gray-800 border-b border-gray-700 px-6 shadow-sm">
-          <h1 className="text-3xl">Welcome, {userData?.name || "User"}</h1>
+          <h1 className="text-3xl">Welcome, {user?.name || "User"}</h1>
           <button
             className="md:hidden text-gray-300"
             onClick={() => setSidebarOpen(!sidebarOpen)}

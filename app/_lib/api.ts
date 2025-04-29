@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// Base URL for the API
 const BASE_URL = "https://intern-hub-server.onrender.com/api/v1";
 
 // Create a reusable axios instance
@@ -16,8 +15,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
       const errorMessage =
         error.response.data?.message ||
         error.response.data?.error ||
@@ -49,7 +46,7 @@ export interface User {
   name: string;
   email: string;
   role: string;
-  photo?: string | null;
+  photo: string;
 }
 
 // Response wrapper type
@@ -134,18 +131,22 @@ export const authApi = {
     return data;
   },
 
-  async updatePersonalInfo(name: string, email: string, photo: string) {
-    const { data } = await api.patch<ApiResponse<null>>("user/update-me", {
-      name,
-      email,
-      photo,
-    });
+  async updatePersonalInfo(formData: FormData) {
+    const { data } = await api.patch<ApiResponse<null>>(
+      "/user/update-me",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return data;
   },
 
   async updatePassword(currentPassword: string, newPassword: string) {
     const { data } = await api.patch<ApiResponse<null>>(
-      "user/update-password",
+      "/user/update-password",
       {
         currentPassword,
         newPassword,
