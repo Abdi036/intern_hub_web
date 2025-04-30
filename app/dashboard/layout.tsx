@@ -40,7 +40,7 @@ export default function DashboardLayout({
           </button>
         </header>
 
-        <main className="flex-1 overflow-auto p-6 bg-gray-900">{children}</main>
+        <main className="flex-1 overflow-auto p-4 bg-gray-900">{children}</main>
       </div>
     </div>
   );
