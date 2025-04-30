@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Signup() {
-  const { signUp, loading, error,setError } = useAuth();
+  const { signUp, loading, error, setError } = useAuth();
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
@@ -43,7 +43,7 @@ export default function Signup() {
         formData.password,
         formData.role
       );
-      router.push("/auth/signin");
+      router.push("/signin");
     } catch (error) {
       console.error("Signup failed:", error);
     }
@@ -191,8 +191,8 @@ export default function Signup() {
           <p className="mt-5 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
-             onClick={() => setError(null)}
-              href={`/auth/signin`}
+              onClick={() => setError(null)}
+              href={`/signin`}
               className="font-medium text-primary hover:underline underline-offset-4"
             >
               Sign in

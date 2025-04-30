@@ -14,7 +14,7 @@ export default function Navbar() {
     if (isAuthenticated) {
       router.push("/dashboard");
     } else {
-      router.push("/auth/signin");
+      router.push("/signin");
     }
   };
 

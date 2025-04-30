@@ -1,17 +1,25 @@
+"use client";
+
 import Image from "next/image";
 import img1 from "@/public/pexels-fauxels-3184357.jpg";
 
-import {
-  // ArrowRight,
-  Building,
-  GraduationCap,
-  // Search,
-  Users,
-} from "lucide-react";
+import { Building, GraduationCap, Users } from "lucide-react";
 import Button from "./Button";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../_context/AuthContext";
 
 export default function Hero() {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+
+  const handleExploreClick = () => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    } else {
+      router.push("/signin");
+    }
+  };
+
   return (
     <main className="flex-1">
       <section
@@ -42,9 +50,10 @@ export default function Hero() {
                 meaningful internship opportunities that launch careers.
               </p>
               <div className="flex flex-col gap-4 min-[400px]:flex-row justify-center">
-                <Link href="/auth/signin">
-                  <Button text="Explore Opportunities" />
-                </Link>
+                <Button
+                  text="Explore Opportunities"
+                  onClick={handleExploreClick}
+                />
               </div>
               <div className="flex items-center justify-center gap-8 text-sm text-gray-200">
                 <div className="flex items-center gap-2">

@@ -89,7 +89,7 @@ export default function Signin() {
                   Password
                 </label>
                 <Link
-                  href="/auth/forgotpassword"
+                  href="/forgotpassword"
                   className="text-sm font-medium text-primary hover:underline underline-offset-4"
                 >
                   Forgot password?
@@ -137,7 +137,7 @@ export default function Signin() {
             Don&apos;t have an account?{" "}
             <Link
               onClick={() => setError(null)}
-              href="/auth/signup"
+              href="/signup"
               className="font-medium text-primary hover:underline underline-offset-4"
             >
               Sign up
