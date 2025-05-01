@@ -2,13 +2,10 @@
 
 import { useAuth } from "@/app/_context/AuthContext";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 export default function PasswordUpdatePage() {
-  const { loading, updatePassword, error, deleteAccount } = useAuth();
-  const router = useRouter();
+  const { loading, updatePassword, error } = useAuth();
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -41,15 +38,6 @@ export default function PasswordUpdatePage() {
       newPassword: "",
     });
   }
-
-  const handleDeleteAccount = async () => {
-    try {
-      await deleteAccount();
-      router.push("/");
-    } catch (error) {
-      console.error("Failed to delete account:", error);
-    }
-  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -105,48 +93,7 @@ export default function PasswordUpdatePage() {
             </button>
           </div>
         </form>
-
-        <div className="mt-8 pt-8 border-t border-gray-700">
-          <h3 className="text-lg font-medium text-red-500 mb-4">Danger Zone</h3>
-          <button
-            disabled={loading}
-            onClick={() => setShowDeleteConfirm(true)}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Delete Account
-          </button>
-        </div>
       </div>
-
-      {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-card rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold text-red-500 mb-4">
-              Delete Account
-            </h3>
-            <p className="text-gray-300 mb-6">
-              Are you sure you want to delete your account? This action cannot
-              be undone.
-            </p>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDeleteAccount}
-                disabled={loading}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Deleting..." : "Delete Account"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -49,6 +49,37 @@ export interface User {
   photo: string | null;
 }
 
+// Internship type
+// types.ts (or wherever you define your types)
+
+export interface Company {
+  _id: string;
+  name: string;
+}
+
+// types.ts
+export interface Internship {
+  _id: string;
+  title: string;
+  CompanyName: string;
+  department: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  requiredSkills: string[];
+  location: string;
+  remote: boolean;
+  paid: boolean;
+  numPositions: number;
+  applicationDeadline: string;
+  companyId: {
+    _id: string;
+    name: string;
+  };
+  applicants: string[];
+  createdAt: string;
+}
+
 // Response wrapper type
 interface ApiResponse<T> {
   status: string;
@@ -158,5 +189,26 @@ export const authApi = {
   async deleteAccount() {
     const { data } = await api.delete<ApiResponse<null>>("/user/delete-me");
     return data;
+  },
+};
+
+export const dashboardApi = {
+  async getAllInternships(queryParams = {}) {
+    const { data } = await api.get<{
+      status: string;
+      results: number;
+      pagination: {
+        total: number;
+        page: number;
+        pages: number;
+        limit: number;
+      };
+      data: { internships: Internship[] };
+    }>("/internships", { params: queryParams });
+
+    return {
+      internships: data.data.internships,
+      pagination: data.pagination,
+    };
   },
 };

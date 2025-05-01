@@ -7,7 +7,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { authApi, User } from "../_lib/api";
+import { authApi, User, Internship, dashboardApi } from "../_lib/api";
 
 // Simple auth context type
 interface AuthContextType {
@@ -31,7 +31,16 @@ interface AuthContextType {
     currentPassword: string,
     newPassword: string
   ) => Promise<void>;
-  deleteAccount: () => Promise<void>;
+  getAllInternships: () => Promise<{
+    internships: Internship[];
+    pagination: {
+      total: number;
+      page: number;
+      pages: number;
+      limit: number;
+    };
+  }>;
+  internships: Internship[];
 }
 
 // Create the context
@@ -39,8 +48,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Auth provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
@@ -83,32 +92,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Sign in function
-  // const signIn = async (email: string, password: string) => {
-  //   try {
-  //     setLoading(true);
-  //     setError(null);
-  //     const response = await authApi.signIn(email, password);
-  //     const userData = {
-  //       ...response.data,
-  //       photo: response.data.photo || null,
-  //     };
-  //     setUserData(userData);
-  //     const { name, email: userEmail, role, photo } = userData;
-  //     localStorage.setItem(
-  //       "userData",
-  //       JSON.stringify({ name, userEmail, role, photo })
-  //     );
-  //     setIsAuthenticated(true);
-  //   } catch (error) {
-  //     const errorMessage =
-  //       error instanceof Error ? error.message : "Failed to sign in";
-  //     setError(errorMessage);
-  //     throw error;
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
@@ -223,17 +206,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const deleteAccount = async () => {
+  // Get all the Internship
+  // const getAllInternships = async (): Promise<Internship[]> => {
+  //   try {
+  //     setLoading(true);
+  //     setError(null);
+  //     const data = await dashboardApi.getAllInternships();
+  //     return data.internships;
+  //   } catch (error) {
+  //     const errorMessage =
+  //       error instanceof Error ? error.message : "Failed to fetch internships";
+  //     setError(errorMessage);
+  //     return [];
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const getAllInternships = async (
+    queryParams = {}
+  ): Promise<{
+    internships: Internship[];
+    pagination: {
+      total: number;
+      page: number;
+      pages: number;
+      limit: number;
+    };
+  }> => {
     try {
       setLoading(true);
       setError(null);
-      await authApi.deleteAccount();
-      signOut();
+      const data = await dashboardApi.getAllInternships(queryParams);
+      return data;
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to delete account";
+        error instanceof Error ? error.message : "Failed to fetch internships";
       setError(errorMessage);
-      throw error;
+      return {
+        internships: [],
+        pagination: { total: 0, page: 1, pages: 1, limit: 10 },
+      };
     } finally {
       setLoading(false);
     }
@@ -244,16 +257,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated,
         loading,
         error,
+        internships: [],
+        user,
         signIn,
         signUp,
         signOut,
         setError,
-        user,
         forgotPassword,
         resetPassword,
         updatePersonalInfo,
         updatePassword,
-        deleteAccount,
+        getAllInternships,
       }}
     >
       {children}
