@@ -1,5 +1,6 @@
 import { Building, MapPin, CalendarDays } from "lucide-react";
 import { Internship } from "@/app/_lib/api";
+import Link from "next/link";
 
 interface InternshipCardProps {
   internship: Internship;
@@ -63,7 +64,8 @@ export default function InternshipCard({ internship }: InternshipCardProps) {
       <div className="p-4 border-t border-gray-500 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="text-sm">
           <div>
-            <strong>{paid ? "Paid" : "Unpaid"}</strong> · {numPositions} position(s)
+            <strong>{paid ? "Paid" : "Unpaid"}</strong> · {numPositions}{" "}
+            position(s)
           </div>
           <div>
             Deadline:{" "}
@@ -72,9 +74,12 @@ export default function InternshipCard({ internship }: InternshipCardProps) {
             </span>
           </div>
         </div>
-        <button className="bg-primary text-white py-1.5 px-4 rounded hover:bg-secondary text-sm font-medium cursor-pointer">
+        <Link
+          href={"/dashboard/internships/apply"}
+          className="bg-primary text-white py-1.5 px-4 rounded hover:bg-secondary text-sm font-medium cursor-pointer"
+        >
           Apply
-        </button>
+        </Link>
       </div>
     </div>
   );

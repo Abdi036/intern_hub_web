@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 
 export default function PasswordUpdatePage() {
   const { loading, updatePassword, error } = useAuth();
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",

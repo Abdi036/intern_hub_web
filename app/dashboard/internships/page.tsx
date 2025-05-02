@@ -1,13 +1,14 @@
 "use client";
 
 import InternshipCard from "@/app/_components/InternshipCard";
+import Spinner from "@/app/_components/Spinner";
 import { useAuth } from "@/app/_context/AuthContext";
 import { Internship } from "@/app/_lib/api";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-  const { getAllInternships } = useAuth();
+  const { getAllInternships, loading } = useAuth();
 
   const [internships, setInternships] = useState<Internship[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
@@ -50,7 +51,7 @@ export default function Page() {
       }
     };
     fetchInternships();
-  }, [getAllInternships]);
+  }, []);
 
   return (
     <div className="space-y-4 md:space-y-6 p-4 sm:p-6 flex flex-col">
@@ -133,12 +134,20 @@ export default function Page() {
         </div>
 
         {/* Internships */}
-        {(filteredInternships.length > 0
-          ? filteredInternships
-          : internships
-        ).map((internship, index) => (
-          <InternshipCard key={index} internship={internship} />
-        ))}
+        {loading ? (
+          <div className="flex items-center justify-center w-full h-64">
+            <Spinner text="Loading internships..." />
+          </div>
+        ) : (
+          <>
+            {(filteredInternships.length > 0
+              ? filteredInternships
+              : internships
+            ).map((internship, index) => (
+              <InternshipCard key={index} internship={internship} />
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
