@@ -41,6 +41,8 @@ interface AuthContextType {
     };
   }>;
   internships: Internship[];
+  getInternshipById: (id: string) => Promise<Internship>;
+  applyForInternship: (id: string, formData: FormData) => Promise<void>;
 }
 
 // Create the context
@@ -251,6 +253,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   };
+
+  const getInternshipById = async (id: string): Promise<Internship> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardApi.getInternshipById(id);
+      return response.internship;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch internship";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // authcontext.tsx
+  const applyForInternship = async (id: string, formData: FormData) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardApi.applyForInternship(id, formData);
+      console.log("Application response:", response);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to apply for internship";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -268,6 +306,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updatePersonalInfo,
         updatePassword,
         getAllInternships,
+        getInternshipById,
+        applyForInternship,
       }}
     >
       {children}

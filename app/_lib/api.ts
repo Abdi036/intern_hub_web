@@ -82,6 +82,7 @@ export interface Internship {
 
 // Response wrapper type
 interface ApiResponse<T> {
+  internship: Internship | PromiseLike<Internship>;
   status: string;
   data: T;
   token?: string;
@@ -210,5 +211,25 @@ export const dashboardApi = {
       internships: data.data.internships,
       pagination: data.pagination,
     };
+  },
+
+  async getInternshipById(id: string) {
+    const { data } = await api.get<ApiResponse<Internship>>(
+      `/internships/${id}`
+    );
+
+    return data;
+  },
+  async applyForInternship(id: string, formData: FormData) {
+    const { data } = await api.post<ApiResponse<null>>(
+      `/internships/${id}/apply`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return data;
   },
 };

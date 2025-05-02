@@ -1,13 +1,18 @@
+"use client";
+
 import { Building, MapPin, CalendarDays } from "lucide-react";
 import { Internship } from "@/app/_lib/api";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface InternshipCardProps {
   internship: Internship;
 }
 
 export default function InternshipCard({ internship }: InternshipCardProps) {
+  const router = useRouter();
+
   const {
+    _id: id,
     title,
     CompanyName,
     department,
@@ -21,6 +26,10 @@ export default function InternshipCard({ internship }: InternshipCardProps) {
     numPositions,
     applicationDeadline,
   } = internship;
+
+  const handleApply = async () => {
+    router.push(`/dashboard/internships/${id}`);
+  };
 
   return (
     <div className="border border-gray-600 rounded-lg shadow-sm bg-card text-gray-300">
@@ -74,12 +83,13 @@ export default function InternshipCard({ internship }: InternshipCardProps) {
             </span>
           </div>
         </div>
-        <Link
-          href={"/dashboard/internships/apply"}
+
+        <button
+          onClick={handleApply}
           className="bg-primary text-white py-1.5 px-4 rounded hover:bg-secondary text-sm font-medium cursor-pointer"
         >
           Apply
-        </Link>
+        </button>
       </div>
     </div>
   );
