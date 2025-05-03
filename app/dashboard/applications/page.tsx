@@ -47,10 +47,10 @@ export default function ApplicationsPage() {
           <button
             key={tab}
             onClick={() => setSelectedTab(tab)}
-            className={`px-4 py-2 rounded-md text-sm font-medium capitalize ${
+            className={`px-4 py-2 rounded-md text-sm font-medium capitalize cursor-pointer ${
               selectedTab === tab
-                ? "bg-secondary text-white"
-                : "bg-gray-500 text-white hover:bg-gray-400"
+                ? "text-secondary bg-white"
+                : "bg-gray-600 text-white hover:bg-gray-500"
             }`}
           >
             {tab.replace("-", " ")}
@@ -63,6 +63,10 @@ export default function ApplicationsPage() {
           <div className="flex justify-center items-center">
             <Spinner text="loading Applications" />
           </div>
+        ) : filteredApplications.length === 0 ? (
+          <p className="text-center text-gray-400 mt-20">
+            There is no {selectedTab} application currently.
+          </p>
         ) : (
           filteredApplications.map((application, i) => (
             <ApplicationCard key={i} application={application} />

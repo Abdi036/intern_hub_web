@@ -5,15 +5,16 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 export default function Page() {
-  const { applyForInternship, loading } = useAuth();
+  const { applyForInternship, error } = useAuth();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { id } = useParams() as { id: string };
 
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [portfolio, setPortfolio] = useState("");
-  const router = useRouter();
+  // const router = useRouter();x
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -25,8 +26,10 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     if (!pdfFile) {
       alert("PDF file is required.");
+      setLoading(false);
       return;
     }
 
@@ -39,16 +42,16 @@ export default function Page() {
     try {
       if (!id) {
         alert("Invalid internship ID.");
+        setLoading(false);
         return;
       }
       await applyForInternship(id, formData);
       alert("Application submitted successfully!");
-    } catch (error) {
-      console.error("Error applying:", error);
-    }
-    router.push("/dashboard/internships");
+    } catch {}
+    // router.push("/dashboard/internships");
     setPdfFile(null);
     setPortfolio("");
+    setLoading(false);
   };
 
   return (
@@ -131,11 +134,19 @@ export default function Page() {
               onClick={handleSubmit}
               type="button"
               disabled={loading}
-              className="w-full cursor-pointer bg-primary hover:bg-secondary text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all"
+              className="w-full cursor-pointer bg-primary hover:bg-secondary text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-300 focus:ring-offset-2 focus:ring-offset-gray-800 transition-color disabled:opacity-50  disabled:cursor-not-allowed"
             >
               {loading ? "Submitting..." : "Submit"}
             </button>
           </div>
+
+          {error && (
+            <div>
+              <p className="text-red-500 bg-red-50 border border-red-300 rounded-md py-2 px-4 mb-2 text-center font-bold">
+                {error}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
