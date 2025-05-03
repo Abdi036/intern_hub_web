@@ -73,7 +73,7 @@ export interface Internship {
   numPositions: number;
   applicationDeadline: string;
   companyId: {
-    _id: string | null;
+    _id: string;
   };
   applicants: string[];
   createdAt: string;

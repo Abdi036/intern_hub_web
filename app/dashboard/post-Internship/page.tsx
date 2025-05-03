@@ -5,9 +5,12 @@ import { Internship } from "@/app/_lib/api";
 import { useState } from "react";
 
 export default function PostInternshipPage() {
-  const { postinternship, user } = useAuth();
-
-  const [formData, setFormData] = useState<Internship>({
+  const { postinternship, user, loading } = useAuth();
+  type InternshipFormData = Omit<
+    Internship,
+    "_id" | "applicants" | "createdAt"
+  >;
+  const [formData, setFormData] = useState<InternshipFormData>({
     title: "",
     CompanyName: "",
     department: "",
@@ -20,7 +23,9 @@ export default function PostInternshipPage() {
     paid: false,
     numPositions: 1,
     applicationDeadline: "",
-    companyId: user?._id ?? null
+    companyId: {
+      _id: user?._id || "",
+    },
   });
 
   const [newSkill, setNewSkill] = useState("");
@@ -53,9 +58,13 @@ export default function PostInternshipPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await postinternship(formData);
-      console.log("Internship posted successfully");
-
+      await postinternship({
+        ...formData,
+        _id: "",
+        applicants: [],
+        createdAt: new Date().toISOString(),
+      });
+      alert("Internship posted successfully! 🎇🎇🎇");
       // Reset form after submission
       setFormData({
         title: "",
@@ -70,7 +79,9 @@ export default function PostInternshipPage() {
         paid: false,
         numPositions: 1,
         applicationDeadline: "",
-        companyId: user?._id,
+        companyId: {
+          _id: user?._id || "",
+        },
       });
     } catch (error) {
       console.error("Failed to post internship:", error);
@@ -218,7 +229,7 @@ export default function PostInternshipPage() {
           <input
             type="text"
             name="companyId"
-            value={formData.companyId}
+            defaultValue={formData.companyId._id ?? ""}
             placeholder="Company ID"
             className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white cursor-not-allowed"
           />
@@ -260,7 +271,8 @@ export default function PostInternshipPage() {
               <button
                 type="button"
                 onClick={addSkill}
-                className="bg-primary text-white px-4 py-2 rounded hover:bg-secondary"
+                disabled={loading}
+                className="bg-primary text-white px-4 py-2 rounded hover:bg-secondary cursor-pointer transition-colors"
               >
                 Add
               </button>
@@ -271,7 +283,8 @@ export default function PostInternshipPage() {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-primary text-white px-6 py-2 rounded hover:bg-secondary"
+            disabled={loading}
+            className="bg-primary text-white px-6 py-2 rounded hover:bg-secondary cursor-pointer transition-colors"
           >
             Post Internship
           </button>

@@ -284,8 +284,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      const response = await dashboardApi.applyForInternship(id, formData);
-      console.log("Application response:", response);
+      await dashboardApi.applyForInternship(id, formData);
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -336,8 +335,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      const internship = await dashboardApi.postInternship(formData);
-      console.log(internship);
+      await dashboardApi.postInternship(formData);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to post internship";
