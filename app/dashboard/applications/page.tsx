@@ -1,38 +1,36 @@
 "use client";
-import { useState } from "react";
-import { Building, Calendar, Eye, FileText } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/app/_context/AuthContext";
+import { Application } from "@/app/_lib/api";
 
+import ApplicationCard from "@/app/_components/ApplicationCard";
+import Spinner from "@/app/_components/Spinner";
 const tabs = ["all", "pending", "accepted", "rejected"];
-
-const applications: Application[] = [
-  {
-    title: "Marketing Intern",
-    company: "Global Marketing Inc.",
-    status: "Pending",
-    date: "Applied on Apr 20, 2023",
-  },
-  {
-    title: "Data Science Intern",
-    company: "Data Insights Co.",
-    status: "Rejected",
-    date: "Applied on Apr 5, 2023",
-  },
-  {
-    title: "Product Management Intern",
-    company: "Product Innovations",
-    status: "Accepted",
-    date: "Applied on Mar 25, 2023",
-  },
-];
 
 export default function ApplicationsPage() {
   const [selectedTab, setSelectedTab] = useState("all");
+  const [applications, setApplications] = useState<Application[]>([]);
 
-  const filtered =
+  const { getAllApplicatons, loading } = useAuth();
+
+  const fetchApplications = async () => {
+    try {
+      const response = await getAllApplicatons();
+      setApplications(response);
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  const filteredApplications =
     selectedTab === "all"
       ? applications
       : applications.filter(
-          (app) => app.status.toLowerCase().replace(" ", "-") === selectedTab
+          (app) => app.applicationStatus.toLowerCase() === selectedTab
         );
 
   return (
@@ -61,64 +59,16 @@ export default function ApplicationsPage() {
       </div>
 
       <div className="space-y-4">
-        {filtered.map((application, i) => (
-          <ApplicationCard key={i} application={application} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ApplicationCard({ application }: { application: Application }) {
-  const statusColors = {
-    Pending: "bg-blue-100 text-blue-800",
-    "In Review": "bg-amber-100 text-amber-800",
-    Interview: "bg-purple-100 text-purple-800",
-    Accepted: "bg-green-100 text-green-800",
-    Rejected: "bg-red-100 text-red-800",
-  };
-
-  return (
-    <div className="border-gray-600 rounded-lg shadow-sm p-4 bg-card">
-      <div className="flex justify-between items-start mb-2">
-        <div>
-          <h2 className="text-lg font-semibold">{application.title}</h2>
-          <div className="flex items-center text-sm text-gray-600 mt-1">
-            <Building className="mr-1" />
-            {application.company}
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <Spinner text="loading Applications" />
           </div>
-        </div>
-        <span
-          className={`px-3 py-1 text-xs rounded-full font-semibold ${
-            statusColors[application.status]
-          }`}
-        >
-          {application.status}
-        </span>
-      </div>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-sm text-gray-500">
-        <div className="flex items-center mb-2 sm:mb-0">
-          <Calendar className="mr-1" />
-          {application.date}
-        </div>
-        <div className="flex gap-2">
-          <button className="flex items-center px-3 py-1 border rounded hover:bg-gray-100">
-            <Eye className="mr-1" />
-            View Details
-          </button>
-          <button className="flex items-center px-3 py-1 border rounded hover:bg-gray-100">
-            <FileText className="mr-1" />
-            View Application
-          </button>
-        </div>
+        ) : (
+          filteredApplications.map((application, i) => (
+            <ApplicationCard key={i} application={application} />
+          ))
+        )}
       </div>
     </div>
   );
-}
-
-interface Application {
-  title: string;
-  company: string;
-  status: "Pending" | "Accepted" | "Rejected";
-  date: string;
 }

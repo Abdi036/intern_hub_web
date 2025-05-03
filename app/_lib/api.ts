@@ -80,6 +80,29 @@ export interface Internship {
   createdAt: string;
 }
 
+// application type
+
+export interface Application {
+  applicationId: string;
+  internshipId: string;
+  title: string;
+  companyName: string;
+  department: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  remote: boolean;
+  paid: boolean;
+  applicationStatus: "pending" | "accepted" | "rejected";
+  applicationDeadline: string;
+  numPositions: number;
+  description: string;
+  requiredSkills: string[];
+  coverLetter: string;
+  portfolio: string;
+  appliedAt: string;
+}
+
 // Response wrapper type
 interface ApiResponse<T> {
   internship: Internship | PromiseLike<Internship>;
@@ -220,6 +243,7 @@ export const dashboardApi = {
 
     return data;
   },
+
   async applyForInternship(id: string, formData: FormData) {
     const { data } = await api.post<ApiResponse<null>>(
       `/internships/${id}/apply`,
@@ -231,5 +255,13 @@ export const dashboardApi = {
       }
     );
     return data;
+  },
+
+  async getApplications() {
+    const { data } = await api.get<
+      ApiResponse<{ applications: Application[] }>
+    >("/internships/my-applications");
+
+    return data.data.applications;
   },
 };

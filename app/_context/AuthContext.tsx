@@ -7,7 +7,13 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { authApi, User, Internship, dashboardApi } from "../_lib/api";
+import {
+  authApi,
+  User,
+  Internship,
+  dashboardApi,
+  Application,
+} from "../_lib/api";
 
 // Simple auth context type
 interface AuthContextType {
@@ -43,6 +49,7 @@ interface AuthContextType {
   internships: Internship[];
   getInternshipById: (id: string) => Promise<Internship>;
   applyForInternship: (id: string, formData: FormData) => Promise<void>;
+  getAllApplicatons: () => Promise<Application[]>;
 }
 
 // Create the context
@@ -270,7 +277,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // authcontext.tsx
   const applyForInternship = async (id: string, formData: FormData) => {
     try {
       setLoading(true);
@@ -282,6 +288,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error instanceof Error
           ? error.message
           : "Failed to apply for internship";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAllApplicatons = async (): Promise<Application[]> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardApi.getApplications();
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch applications";
       setError(errorMessage);
       throw error;
     } finally {
@@ -308,6 +330,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         getAllInternships,
         getInternshipById,
         applyForInternship,
+        getAllApplicatons,
       }}
     >
       {children}
