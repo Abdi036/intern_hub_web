@@ -80,6 +80,32 @@ export interface Internship {
   createdAt: string;
 }
 
+
+//applicationDetailResponse
+
+export interface ApplicationDetailResponse {
+  applicationId: string;
+  application: {
+    id: string;
+    appliedAt: string;
+    coverLetter: string;
+    portfolio: string;
+    status: "pending" | "accepted" | "rejected";
+  };
+  internship: {
+    title: string;
+    companyName: string;
+    department: string;
+    location: string;
+    remote: boolean;
+    paid: boolean;
+    startDate: string;
+    endDate: string;
+    applicationDeadline: string;
+  };
+}
+
+
 // application type
 
 export interface Application {
@@ -263,5 +289,12 @@ export const dashboardApi = {
     >("/internships/my-applications");
 
     return data.data.applications;
+  },
+
+  async getApplicationById(id: string) {
+    const { data } = await api.get<ApiResponse<ApplicationDetailResponse>>(
+      `/internships/${id}/application`
+    );
+    return data;
   },
 };

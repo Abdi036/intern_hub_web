@@ -13,6 +13,7 @@ import {
   Internship,
   dashboardApi,
   Application,
+  ApplicationDetailResponse,
 } from "../_lib/api";
 
 // Simple auth context type
@@ -50,6 +51,7 @@ interface AuthContextType {
   getInternshipById: (id: string) => Promise<Internship>;
   applyForInternship: (id: string, formData: FormData) => Promise<void>;
   getAllApplicatons: () => Promise<Application[]>;
+  getApplicationById: (id: string) => Promise<ApplicationDetailResponse>;
 }
 
 // Create the context
@@ -311,6 +313,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getApplicationById = async (
+    id: string
+  ): Promise<ApplicationDetailResponse> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardApi.getApplicationById(id);
+      return response.data;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch application";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -331,6 +351,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         getInternshipById,
         applyForInternship,
         getAllApplicatons,
+        getApplicationById,
       }}
     >
       {children}
