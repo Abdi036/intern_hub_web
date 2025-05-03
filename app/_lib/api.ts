@@ -73,13 +73,11 @@ export interface Internship {
   numPositions: number;
   applicationDeadline: string;
   companyId: {
-    _id: string;
-    name: string;
+    _id: string | null;
   };
   applicants: string[];
   createdAt: string;
 }
-
 
 //applicationDetailResponse
 
@@ -104,7 +102,6 @@ export interface ApplicationDetailResponse {
     applicationDeadline: string;
   };
 }
-
 
 // application type
 
@@ -294,6 +291,19 @@ export const dashboardApi = {
   async getApplicationById(id: string) {
     const { data } = await api.get<ApiResponse<ApplicationDetailResponse>>(
       `/internships/${id}/application`
+    );
+    return data;
+  },
+
+  async postInternship(formData: Internship) {
+    const { data } = await api.post<ApiResponse<Internship>>(
+      "/internships/postInternship",
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
     return data;
   },

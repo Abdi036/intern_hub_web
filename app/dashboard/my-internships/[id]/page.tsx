@@ -1,9 +1,10 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useState } from "react";
 
-// This would typically come from an API call
+// Dummy Data
 const dummyInternships = [
   {
     _id: "1",
@@ -41,28 +42,52 @@ const dummyInternships = [
 
 export default function InternshipDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const internship = dummyInternships.find(
     (intern) => intern._id === params.id
   );
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(internship);
+
   if (!internship) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Internship Not Found</h1>
-          <Link
-            href="/dashboard/my-internships"
-            className="text-primary hover:underline"
-          >
-            Back to My Internships
-          </Link>
-        </div>
+      <div className="max-w-6xl mx-auto px-4 py-8 text-center">
+        <h1 className="text-3xl font-bold mb-4">Internship Not Found</h1>
+        <Link
+          href="/dashboard/my-internships"
+          className="text-primary hover:underline"
+        >
+          Back to My Internships
+        </Link>
       </div>
     );
   }
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    // Here, you would typically send a PUT or PATCH request to the backend.
+    console.log("Updated Internship:", formData);
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setFormData(internship);
+    setIsEditing(false);
+  };
+
+  const handleDelete = () => {
+    // Here, you'd make a DELETE request to your backend API.
+    console.log("Deleted Internship ID:", internship._id);
+    router.push("/dashboard/my-internships");
+  };
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="mx-auto px-4 py-8">
       <div className="mb-6">
         <Link
           href="/dashboard/my-internships"
@@ -72,14 +97,60 @@ export default function InternshipDetailPage() {
         </Link>
       </div>
 
-      <div className="bg-card shadow-md border rounded-lg p-6">
-        <h1 className="text-3xl font-bold mb-2">{internship.title}</h1>
-        <p className="text-xl text-gray-400 mb-6">{internship.CompanyName}</p>
+      <div className="bg-card shadow-md border border-gray-600 rounded-lg p-6">
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            {isEditing ? (
+              <input
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                className="text-3xl font-bold mb-2 bg-transparent border-b border-gray-300 focus:outline-none"
+              />
+            ) : (
+              <h1 className="text-3xl font-bold mb-2">{formData.title}</h1>
+            )}
+            <p className="text-xl text-gray-400">{formData.CompanyName}</p>
+          </div>
+
+          {!isEditing ? (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="px-4 py-2 w-20 bg-primary cursor-pointer hover:bg-secondary transition-colors text-white rounded"
+            >
+              Edit
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-green-600 text-white rounded"
+              >
+                Save
+              </button>
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 bg-gray-500 text-white rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
 
         <div className="grid gap-6">
           <div>
             <h2 className="text-xl font-semibold mb-4">Overview</h2>
-            <p className="text-gray-400 mb-4">{internship.description}</p>
+            {isEditing ? (
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                className="w-full p-2 border rounded"
+              />
+            ) : (
+              <p className="text-gray-400">{formData.description}</p>
+            )}
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -87,24 +158,52 @@ export default function InternshipDetailPage() {
               <h3 className="text-lg font-semibold mb-3">Details</h3>
               <div className="space-y-2">
                 <p>
-                  <span className="font-medium">Department:</span>{" "}
-                  {internship.department}
+                  <strong>Department:</strong>{" "}
+                  {isEditing ? (
+                    <input
+                      name="department"
+                      value={formData.department}
+                      onChange={handleInputChange}
+                      className="border px-2 py-1 rounded bg-gray-600"
+                    />
+                  ) : (
+                    formData.department
+                  )}
                 </p>
                 <p>
-                  <span className="font-medium">Location:</span>{" "}
-                  {internship.location}
+                  <strong>Location:</strong>{" "}
+                  {isEditing ? (
+                    <input
+                      name="location"
+                      value={formData.location}
+                      onChange={handleInputChange}
+                      className="border px-2 py-1 rounded bg-gray-600"
+                    />
+                  ) : (
+                    formData.location
+                  )}
                 </p>
                 <p>
-                  <span className="font-medium">Type:</span>{" "}
-                  {internship.remote ? "Remote" : "On-site"}
+                  <strong>Type:</strong>{" "}
+                  {formData.remote ? "Remote" : "On-site"}
                 </p>
                 <p>
-                  <span className="font-medium">Compensation:</span>{" "}
-                  {internship.paid ? "Paid" : "Unpaid"}
+                  <strong>Compensation:</strong>{" "}
+                  {formData.paid ? "Paid" : "Unpaid"}
                 </p>
                 <p>
-                  <span className="font-medium">Positions Available:</span>{" "}
-                  {internship.numPositions}
+                  <strong>Positions:</strong>{" "}
+                  {isEditing ? (
+                    <input
+                      type="number"
+                      name="numPositions"
+                      value={formData.numPositions}
+                      onChange={handleInputChange}
+                      className="border px-2 py-1 rounded w-20 bg-gray-600"
+                    />
+                  ) : (
+                    formData.numPositions
+                  )}
                 </p>
               </div>
             </div>
@@ -112,20 +211,24 @@ export default function InternshipDetailPage() {
             <div>
               <h3 className="text-lg font-semibold mb-3">Timeline</h3>
               <div className="space-y-2">
-                <p>
-                  <span className="font-medium">Start Date:</span>{" "}
-                  {new Date(internship.startDate).toLocaleDateString()}
-                </p>
-                <p>
-                  <span className="font-medium">End Date:</span>{" "}
-                  {new Date(internship.endDate).toLocaleDateString()}
-                </p>
-                <p>
-                  <span className="font-medium">Application Deadline:</span>{" "}
-                  {new Date(
-                    internship.applicationDeadline
-                  ).toLocaleDateString()}
-                </p>
+                {["startDate", "endDate", "applicationDeadline"].map(
+                  (dateField) => (
+                    <p key={dateField}>
+                      <strong>{dateField.replace(/([A-Z])/g, " $1")}:</strong>{" "}
+                      {isEditing ? (
+                        <input
+                          type="date"
+                          name={dateField}
+                          value={formData[dateField]}
+                          onChange={handleInputChange}
+                          className="border px-2 py-1 rounded bg-gray-600"
+                        />
+                      ) : (
+                        new Date(formData[dateField]).toLocaleDateString()
+                      )}
+                    </p>
+                  )
+                )}
               </div>
             </div>
           </div>
@@ -133,15 +236,24 @@ export default function InternshipDetailPage() {
           <div>
             <h3 className="text-lg font-semibold mb-3">Required Skills</h3>
             <div className="flex flex-wrap gap-2">
-              {internship.requiredSkills.map((skill) => (
+              {formData.requiredSkills.map((skill, i) => (
                 <span
-                  key={skill}
+                  key={i}
                   className="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm"
                 >
                   {skill}
                 </span>
               ))}
             </div>
+          </div>
+
+          <div className="pt-6 border-t mt-4">
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            >
+              Delete Internship
+            </button>
           </div>
         </div>
       </div>

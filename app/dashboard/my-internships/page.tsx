@@ -1,3 +1,4 @@
+import { Eye } from "lucide-react";
 import Link from "next/link";
 
 export default function CompanyInternshipsPage() {
@@ -40,11 +41,11 @@ export default function CompanyInternshipsPage() {
         My Posted Internships
       </h1>
 
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-6">
         {dummyInternships.map((intern) => (
           <div
             key={intern._id}
-            className="bg-card shadow-md border rounded-lg p-5 hover:shadow-lg transition-all duration-300"
+            className="bg-card shadow-md border border-gray-600 rounded-lg p-5 hover:shadow-lg transition-all duration-300"
           >
             <h2 className="text-xl font-semibold mb-1">{intern.title}</h2>
             <p className="text-sm text-gray-400">{intern.department}</p>
@@ -76,8 +77,9 @@ export default function CompanyInternshipsPage() {
               </div>
               <Link
                 href={`/dashboard/my-internships/${intern._id}`}
-                className="bg-primary text-white px-4 py-2 rounded hover:bg-secondary text-sm font-medium"
+                className="bg-primary flex gap-2 items-center justify-center text-white px-4 py-2 rounded hover:bg-secondary text-sm font-medium transition-colors"
               >
+                <Eye className="h-6 w-6" />
                 View Details
               </Link>
             </div>

@@ -52,6 +52,7 @@ interface AuthContextType {
   applyForInternship: (id: string, formData: FormData) => Promise<void>;
   getAllApplicatons: () => Promise<Application[]>;
   getApplicationById: (id: string) => Promise<ApplicationDetailResponse>;
+  postinternship: (formData: Internship) => Promise<void>;
 }
 
 // Create the context
@@ -113,10 +114,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         photo: response.data.photo || null,
       };
       setUser(userData);
-      const { name, email: userEmail, role, photo } = userData;
+      const { name, email: userEmail, role, photo, _id: id } = userData;
       localStorage.setItem(
         "userData",
-        JSON.stringify({ name, email: userEmail, role, photo })
+        JSON.stringify({ name, email: userEmail, role, photo, _id: id })
       );
       setIsAuthenticated(true);
     } catch (error) {
@@ -331,6 +332,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const postinternship = async (formData: Internship): Promise<void> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const internship = await dashboardApi.postInternship(formData);
+      console.log(internship);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to post internship";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -352,6 +368,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         applyForInternship,
         getAllApplicatons,
         getApplicationById,
+        postinternship,
       }}
     >
       {children}

@@ -1,9 +1,13 @@
 "use client";
 
+import { useAuth } from "@/app/_context/AuthContext";
+import { Internship } from "@/app/_lib/api";
 import { useState } from "react";
 
 export default function PostInternshipPage() {
-  const [formData, setFormData] = useState({
+  const { postinternship, user } = useAuth();
+
+  const [formData, setFormData] = useState<Internship>({
     title: "",
     CompanyName: "",
     department: "",
@@ -16,7 +20,7 @@ export default function PostInternshipPage() {
     paid: false,
     numPositions: 1,
     applicationDeadline: "",
-    companyId: "",
+    companyId: user?._id ?? null
   });
 
   const [newSkill, setNewSkill] = useState("");
@@ -24,9 +28,8 @@ export default function PostInternshipPage() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const target = e.target as HTMLInputElement;
-    const { name, value, type } = target;
-    const val = type === "checkbox" ? target.checked : value;
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+    const val = type === "checkbox" ? checked : value;
     setFormData((prev) => ({ ...prev, [name]: val }));
   };
 
@@ -47,10 +50,31 @@ export default function PostInternshipPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
-    // TODO: Send `formData` to API
+    try {
+      await postinternship(formData);
+      console.log("Internship posted successfully");
+
+      // Reset form after submission
+      setFormData({
+        title: "",
+        CompanyName: "",
+        department: "",
+        startDate: "",
+        endDate: "",
+        description: "",
+        requiredSkills: [],
+        location: "",
+        remote: false,
+        paid: false,
+        numPositions: 1,
+        applicationDeadline: "",
+        companyId: user?._id,
+      });
+    } catch (error) {
+      console.error("Failed to post internship:", error);
+    }
   };
 
   return (
@@ -71,7 +95,7 @@ export default function PostInternshipPage() {
             placeholder="Internship Title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
+            className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
           />
           <input
             type="text"
@@ -79,7 +103,7 @@ export default function PostInternshipPage() {
             placeholder="Company Name"
             value={formData.CompanyName}
             onChange={handleChange}
-            className="w-full border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
+            className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
           />
           <input
             type="text"
@@ -87,24 +111,40 @@ export default function PostInternshipPage() {
             placeholder="Department"
             value={formData.department}
             onChange={handleChange}
-            className="w-full border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
+            className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
           />
 
           <div className="grid grid-cols-2 gap-4">
-            <input
-              type="date"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleChange}
-              className="w-full border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
-            />
-            <input
-              type="date"
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleChange}
-              className="w-full border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
-            />
+            <div>
+              <label
+                htmlFor="startDate"
+                className="block text-white font-medium text-sm mb-1"
+              >
+                Start Date:
+              </label>
+              <input
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+                className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="endDate"
+                className="block text-white font-medium text-sm mb-1"
+              >
+                End Date:
+              </label>
+              <input
+                type="date"
+                name="endDate"
+                value={formData.endDate}
+                onChange={handleChange}
+                className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
+              />
+            </div>
           </div>
 
           <textarea
@@ -112,7 +152,7 @@ export default function PostInternshipPage() {
             placeholder="Internship Description"
             value={formData.description}
             onChange={handleChange}
-            className="w-full border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
+            className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
             rows={5}
           />
 
@@ -122,7 +162,7 @@ export default function PostInternshipPage() {
             placeholder="Location"
             value={formData.location}
             onChange={handleChange}
-            className="w-full border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
+            className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
           />
 
           <div className="flex items-center gap-2">
@@ -133,7 +173,9 @@ export default function PostInternshipPage() {
               onChange={handleChange}
               id="remote"
             />
-            <label htmlFor="remote">Remote Position</label>
+            <label htmlFor="remote" className="text-white">
+              Remote Position
+            </label>
           </div>
 
           <div className="flex items-center gap-2">
@@ -144,43 +186,51 @@ export default function PostInternshipPage() {
               onChange={handleChange}
               id="paid"
             />
-            <label htmlFor="paid">Paid Position</label>
+            <label htmlFor="paid" className="text-white">
+              Paid Position
+            </label>
           </div>
 
           <input
             type="number"
             name="numPositions"
-            value={formData.numPositions}
-            onChange={handleChange}
             min={1}
-            className="w-full border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
+            value={Number(formData.numPositions)}
+            onChange={handleChange}
+            className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
             placeholder="Number of Positions"
           />
 
+          <label
+            htmlFor="applicationDeadline"
+            className="text-white font-medium text-sm block"
+          >
+            Application Deadline:
+          </label>
           <input
             type="date"
             name="applicationDeadline"
             value={formData.applicationDeadline}
             onChange={handleChange}
-            className="w-full border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
+            className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
           />
 
           <input
             type="text"
             name="companyId"
             value={formData.companyId}
-            onChange={handleChange}
             placeholder="Company ID"
-            className="w-full border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
+            className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white cursor-not-allowed"
           />
 
+          {/* Required Skills Section */}
           <div>
-            <label className="font-medium">Required Skills</label>
+            <label className="font-medium text-white">Required Skills</label>
             <div className="flex flex-wrap gap-2 my-2">
               {formData.requiredSkills.map((skill) => (
                 <span
                   key={skill}
-                  className="bg-gray-200 px-3 py-1 rounded-full flex items-center gap-2"
+                  className="bg-gray-600 text-white px-3 py-1 rounded-full flex items-center gap-2"
                 >
                   {skill}
                   <button
@@ -205,7 +255,7 @@ export default function PostInternshipPage() {
                   }
                 }}
                 placeholder="Add skill"
-                className="flex-grow border-gray-800  rounded px-4 py-2 bg-gray-800 text-white"
+                className="flex-grow border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
               />
               <button
                 type="button"
@@ -218,7 +268,7 @@ export default function PostInternshipPage() {
           </div>
         </div>
 
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end">
           <button
             type="submit"
             className="bg-primary text-white px-6 py-2 rounded hover:bg-secondary"
