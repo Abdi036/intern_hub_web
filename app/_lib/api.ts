@@ -161,7 +161,6 @@ export interface ApplicantsResponse {
   };
   status: "pending" | "approved" | "rejected";
   appliedAt: string;
-  
 }
 
 // Response wrapper type
@@ -380,10 +379,29 @@ export const dashboardApi = {
   },
 
   async getAllApplicants(id: string) {
-    const { data } = await api.get<
-      ApiResponse<{ applicants: ApplicantsResponse[] }>
-    >(`internships/${id}/applicants`);
+    const { data } = await api.get<ApiResponse<ApplicantsResponse[]>>(
+      `internships/${id}/applicants`
+    );
 
     return data.data;
+  },
+
+  async getApplicant(id: string, applicantId: string) {
+    const { data } = await api.get<ApiResponse<ApplicantsResponse>>(
+      `/internships/${id}/applicants/${applicantId}`
+    );
+
+    return data.data;
+  },
+
+  async updateApplicantStatus(status: string, applicationId: string) {
+    const { data } = await api.patch<ApiResponse<null>>(
+      `/internships/update-application-status`,
+      {
+        applicationId,
+        status,
+      }
+    );
+    return data;
   },
 };

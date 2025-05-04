@@ -26,7 +26,6 @@ export default function InternshipDetailPage() {
         const internship = await getMypostedInternshipDetail(id);
         setInternshipDetail(internship);
 
-        // ✅ Only set updatedData if it hasn't been set before
         setUpdatedData((prev) =>
           Object.keys(prev).length === 0 ? internship.internship : prev
         );

@@ -7,7 +7,7 @@ import { useAuth } from "@/app/_context/AuthContext";
 import { ApplicantsResponse } from "@/app/_lib/api";
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 // const users = [
 //   {
@@ -44,7 +44,7 @@ export default function UsersList() {
   const { id } = useParams() as { id: string };
   const router = useRouter();
 
-  const [applicants, setApplicants] = React.useState<ApplicantsResponse[]>([]);
+  const [applicants, setApplicants] = useState<ApplicantsResponse[]>([]);
 
   useEffect(() => {
     const fetchApplicants = async () => {
@@ -57,8 +57,9 @@ export default function UsersList() {
     fetchApplicants();
   }, []);
 
-  const handleUserClick = (userId: string) => {
-    router.push(`/dashboard/my-internships/${id}/applicants/${userId}`);
+  console.log(applicants);
+  const handleUserClick = (applicantId: string) => {
+    router.push(`/dashboard/my-internships/${id}/applicants/${applicantId}`);
   };
 
   return (

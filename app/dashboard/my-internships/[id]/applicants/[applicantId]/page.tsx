@@ -1,118 +1,40 @@
-// "use client";
-
-// import { ArrowLeft } from "lucide-react";
-// import { useParams, useRouter } from "next/navigation";
-// import React from "react";
-
-// export default function Page() {
-//   const { applicantId } = useParams() as { applicantId: string };
-//   const router = useRouter();
-
-//   // Simulated response data (can be replaced by fetched data)
-//   const data = {
-//     name: "Abdi K",
-//     email: "abdi@gmail.com",
-//     application: {
-//       coverLetter:
-//         "https://res.cloudinary.com/dayiizyiu/raw/upload/v1746265248/cover-letters/ufb8qfpc13jcc5o1jnob.pdf",
-//       portfolio: "https://abdikumela.com",
-//       appliedAt: "2025-05-03T09:40:48.569Z",
-//     },
-//   };
-
-//   return (
-//     <div>
-//       <div className="flex items-center gap-6 h-14 text-white p-4">
-//         <button
-//           onClick={router.back}
-//           className="flex items-center text-primary hover:font-bold cursor-pointer transition-colors"
-//         >
-//           <ArrowLeft className="h-5 w-5" />
-//           Back
-//         </button>
-//         <p className="text-2xl font-bold">Applicants Detail</p>
-//       </div>
-//       <div className="flex justify-center items-center bg-gray-900 text-white px-4">
-//         <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full">
-//           {/* Top Section: Name & Email */}
-//           <div className="mb-6">
-//             <h1 className="text-2xl font-bold mb-1">{data.name}</h1>
-//             <p className="text-sm text-gray-400">{data.email}</p>
-//           </div>
-
-//           {/* Application Details */}
-//           <div className="space-y-3">
-//             <div>
-//               <span className="font-semibold text-gray-300">Applied At: </span>
-//               <span>
-//                 {new Date(data.application.appliedAt).toLocaleString()}
-//               </span>
-//             </div>
-//             <div>
-//               <span className="font-semibold text-gray-300">Portfolio: </span>
-//               <a
-//                 href={data.application.portfolio}
-//                 target="_blank"
-//                 rel="noopener noreferrer"
-//                 className="text-blue-400 hover:underline"
-//               >
-//                 {data.application.portfolio}
-//               </a>
-//             </div>
-//             <div>
-//               <span className="font-semibold text-gray-300">
-//                 Cover Letter:{" "}
-//               </span>
-//               <a
-//                 href={data.application.coverLetter}
-//                 target="_blank"
-//                 rel="noopener noreferrer"
-//                 className="text-blue-400 hover:underline"
-//               >
-//                 View PDF
-//               </a>
-//             </div>
-//           </div>
-
-//           {/* User ID */}
-//           <div className="mt-6 text-sm text-gray-500">
-//             <p>
-//               User ID: <span className="text-white">{applicantId}</span>
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 
+import { useAuth } from "@/app/_context/AuthContext";
+import { ApplicantsResponse } from "@/app/_lib/api";
 import { ArrowLeft, Check, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React from "react";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export default function Page() {
   const router = useRouter();
 
-  // Simulated response data (can be replaced by fetched data)
-  const data = {
-    name: "Abdi K",
-    email: "abdi@gmail.com",
-    application: {
-      coverLetter:
-        "https://res.cloudinary.com/dayiizyiu/raw/upload/v1746265248/cover-letters/ufb8qfpc13jcc5o1jnob.pdf",
-      portfolio: "https://abdikumela.com",
-      appliedAt: "2025-05-03T09:40:48.569Z",
-    },
+  const [data, setData] = useState<ApplicantsResponse>();
+  const { getApplicant } = useAuth();
+
+  const { id, applicantId } = useParams() as {
+    id: string;
+    applicantId: string;
   };
+
+  useEffect(() => {
+    const fetchApplicant = async () => {
+      try {
+        const response = await getApplicant(id, applicantId);
+        setData(response);
+      } catch (error) {
+        console.error("Error fetching applicant data:", error);
+      }
+    };
+
+    fetchApplicant();
+  }, []);
 
   const handleAccept = () => {
     console.log("Applicant accepted");
   };
 
   const handleReject = () => {
-    // Add your reject logic here
     console.log("Applicant rejected");
   };
 
@@ -132,8 +54,8 @@ export default function Page() {
         <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full">
           {/* Top Section: Name & Email */}
           <div className="mb-6">
-            <h1 className="text-2xl font-bold mb-1">{data.name}</h1>
-            <p className="text-sm text-gray-400">{data.email}</p>
+            <h1 className="text-2xl font-bold mb-1">Name: {data?.name}</h1>
+            <h4 className="text-sm text-gray-400">Email :{data?.email}</h4>
           </div>
 
           {/* Application Details */}
@@ -141,18 +63,20 @@ export default function Page() {
             <div>
               <span className="font-semibold text-gray-300">Applied At: </span>
               <span>
-                {new Date(data.application.appliedAt).toLocaleString()}
+                {data?.application?.appliedAt
+                  ? new Date(data.application.appliedAt).toLocaleString()
+                  : "N/A"}
               </span>
             </div>
             <div>
               <span className="font-semibold text-gray-300">Portfolio: </span>
               <a
-                href={data.application.portfolio}
+                href={data?.application.portfolio}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-400 hover:underline"
               >
-                {data.application.portfolio}
+                {data?.application.portfolio}
               </a>
             </div>
             <div>
@@ -160,7 +84,7 @@ export default function Page() {
                 Cover Letter:{" "}
               </span>
               <a
-                href={data.application.coverLetter}
+                href={data?.application.coverLetter}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-400 hover:underline"

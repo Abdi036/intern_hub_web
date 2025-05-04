@@ -60,6 +60,14 @@ interface AuthContextType {
   editMyInternship: (id: string, formData: Internship) => Promise<Internship>;
   deleteInternship: (id: string) => Promise<void>;
   getAllApplicants: (id: string) => Promise<ApplicantsResponse[]>;
+  getApplicant: (
+    id: string,
+    applicantId: string
+  ) => Promise<ApplicantsResponse>;
+  updateApplicantStatus: (
+    status: string,
+    applicationId: string
+  ) => Promise<void>;
 }
 
 // Create the context
@@ -441,6 +449,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getApplicant = async (
+    id: string,
+    applicantId: string
+  ): Promise<ApplicantsResponse> => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await dashboardApi.getApplicant(id, applicantId);
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch applicants";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateApplicantStatus = async (
+    status: string,
+    applicationId: string
+  ) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await dashboardApi.updateApplicantStatus(status, applicationId);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to update applicant status";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -468,6 +516,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         editMyInternship,
         deleteInternship,
         getAllApplicants,
+        getApplicant,
+        updateApplicantStatus,
       }}
     >
       {children}
