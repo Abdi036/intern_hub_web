@@ -15,6 +15,7 @@ export default function CompanyInternshipsPage() {
     const fetchInternships = async () => {
       try {
         const internships = await getAllMyPostedInternships();
+
         setMyInternships(internships);
       } catch (error) {
         console.error("Error fetching internships:", error);
@@ -35,7 +36,7 @@ export default function CompanyInternshipsPage() {
         </div>
       ) : (
         <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-6">
-          {myInternships.map((intern) => (
+          {myInternships.map((intern: Internship) => (
             <div
               key={intern._id}
               className="bg-card shadow-md border border-gray-600 rounded-lg p-5 hover:shadow-lg transition-all duration-300"

@@ -58,7 +58,7 @@ export interface Company {
 }
 
 // types.ts
-export interface Internship {
+export interface InternshipResponse {
   internship: {
     _id: string;
     title: string;
@@ -79,6 +79,26 @@ export interface Internship {
     applicants: string[];
     createdAt: string;
   };
+}
+export interface Internship {
+  _id: string;
+  title: string;
+  CompanyName: string;
+  department: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  requiredSkills: string[];
+  location: string;
+  remote: boolean;
+  paid: boolean;
+  numPositions: number;
+  applicationDeadline: string;
+  companyId: {
+    _id: string;
+  };
+  applicants: string[];
+  createdAt: string;
 }
 
 //applicationDetailResponse
@@ -319,7 +339,7 @@ export const dashboardApi = {
   },
 
   async getMypostedInternshipDetail(id: string) {
-    const { data } = await api.get<ApiResponse<Internship>>(
+    const { data } = await api.get<ApiResponse<InternshipResponse>>(
       `/internships/posted/${id}`
     );
     return data.data;
@@ -336,5 +356,10 @@ export const dashboardApi = {
       }
     );
     return data.data;
+  },
+
+  async deleteInternship(id: string) {
+    const { data } = await api.delete<ApiResponse<null>>(`/internships/${id}`);
+    return data;
   },
 };

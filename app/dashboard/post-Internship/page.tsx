@@ -284,9 +284,9 @@ export default function PostInternshipPage() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary text-white px-6 py-2 rounded hover:bg-secondary cursor-pointer transition-colors"
+            className="bg-primary text-white px-6 py-2 rounded hover:bg-secondary cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Post Internship
+            {loading ? "Posting..." : "Post Internship"}
           </button>
         </div>
       </form>

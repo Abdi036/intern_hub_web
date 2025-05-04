@@ -14,6 +14,7 @@ import {
   dashboardApi,
   Application,
   ApplicationDetailResponse,
+  InternshipResponse,
 } from "../_lib/api";
 
 // Simple auth context type
@@ -54,8 +55,9 @@ interface AuthContextType {
   getApplicationById: (id: string) => Promise<ApplicationDetailResponse>;
   postinternship: (formData: Internship) => Promise<void>;
   getAllMyPostedInternships: () => Promise<Internship[]>;
-  getMypostedInternshipDetail: (id: string) => Promise<Internship>;
+  getMypostedInternshipDetail: (id: string) => Promise<InternshipResponse>;
   editMyInternship: (id: string, formData: Internship) => Promise<Internship>;
+  deleteInternship: (id: string) => Promise<void>;
 }
 
 // Create the context
@@ -369,7 +371,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const getMypostedInternshipDetail = async (
     id: string
-  ): Promise<Internship> => {
+  ): Promise<InternshipResponse> => {
     try {
       setLoading(true);
       setError(null);
@@ -404,6 +406,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const deleteInternship = async (id: string): Promise<void> => {
+    try {
+      setLoading(true);
+      setError(null);
+      await dashboardApi.deleteInternship(id);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to delete internship";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -429,6 +446,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         getAllMyPostedInternships,
         getMypostedInternshipDetail,
         editMyInternship,
+        deleteInternship,
       }}
     >
       {children}
