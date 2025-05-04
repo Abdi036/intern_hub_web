@@ -53,6 +53,9 @@ interface AuthContextType {
   getAllApplicatons: () => Promise<Application[]>;
   getApplicationById: (id: string) => Promise<ApplicationDetailResponse>;
   postinternship: (formData: Internship) => Promise<void>;
+  getAllMyPostedInternships: () => Promise<Internship[]>;
+  getMypostedInternshipDetail: (id: string) => Promise<Internship>;
+  editMyInternship: (id: string, formData: Internship) => Promise<Internship>;
 }
 
 // Create the context
@@ -345,6 +348,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   };
+
+  const getAllMyPostedInternships = async (): Promise<Internship[]> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardApi.getAllMyPostedInternships();
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch posted internships";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getMypostedInternshipDetail = async (
+    id: string
+  ): Promise<Internship> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardApi.getMypostedInternshipDetail(id);
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch internship";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const editMyInternship = async (
+    id: string,
+    formData: Internship
+  ): Promise<Internship> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardApi.editMypostedInternship(id, formData);
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch internship";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -367,6 +426,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         getAllApplicatons,
         getApplicationById,
         postinternship,
+        getAllMyPostedInternships,
+        getMypostedInternshipDetail,
+        editMyInternship,
       }}
     >
       {children}

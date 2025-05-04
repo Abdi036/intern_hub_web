@@ -1,93 +1,43 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/app/_context/AuthContext";
+// import { Internship } from "@/app/_lib/api";
 import Link from "next/link";
-import { useState } from "react";
-
-// Dummy Data
-const dummyInternships = [
-  {
-    _id: "1",
-    title: "Frontend Intern",
-    CompanyName: "Digital Spark",
-    department: "Engineering",
-    startDate: "2025-06-01",
-    endDate: "2025-08-30",
-    description:
-      "Assist in building responsive UIs using React. You'll work closely with our design team to implement beautiful and functional user interfaces. This is a great opportunity to learn modern frontend development practices and work on real-world projects.",
-    requiredSkills: ["React", "JavaScript", "Tailwind CSS"],
-    location: "Remote",
-    remote: true,
-    paid: true,
-    numPositions: 2,
-    applicationDeadline: "2025-05-20",
-  },
-  {
-    _id: "2",
-    title: "Backend Intern",
-    CompanyName: "Digital Spark",
-    department: "Engineering",
-    startDate: "2025-07-01",
-    endDate: "2025-09-15",
-    description:
-      "Work with Node.js and MongoDB to develop REST APIs. You'll be part of our backend team, helping to build and maintain our server infrastructure. This role offers hands-on experience with database design, API development, and cloud services.",
-    requiredSkills: ["Node.js", "Express", "MongoDB"],
-    location: "Addis Ababa",
-    remote: false,
-    paid: false,
-    numPositions: 1,
-    applicationDeadline: "2025-06-10",
-  },
-];
+import { Internship } from "@/app/_lib/api";
+import Spinner from "@/app/_components/Spinner";
 
 export default function InternshipDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const internship = dummyInternships.find(
-    (intern) => intern._id === params.id
-  );
+  const { id } = useParams() as { id: string };
+  const { getMypostedInternshipDetail } = useAuth();
+  const [internshipDetail, setInternshipDetail] = useState<Internship>();
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(internship);
+  useEffect(() => {
+    const fetchInternshipDetail = async () => {
+      try {
+        const internship = await getMypostedInternshipDetail(id);
+        setInternshipDetail(internship);
+      } catch (error) {
+        console.error("Error fetching internship detail:", error);
+      }
+    };
 
-  if (!internship) {
+    fetchInternshipDetail();
+  }, [getMypostedInternshipDetail, id]);
+
+  if (!internshipDetail) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">Internship Not Found</h1>
-        <Link
-          href="/dashboard/my-internships"
-          className="text-primary hover:underline"
-        >
-          Back to My Internships
-        </Link>
+      <div className="flex justify-center items-center h-64">
+        <Spinner text="loading Internship Detail" />
       </div>
     );
   }
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSave = () => {
-    // Here, you would typically send a PUT or PATCH request to the backend.
-    console.log("Updated Internship:", formData);
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setFormData(internship);
-    setIsEditing(false);
-  };
-
-  const handleDelete = () => {
-    // Here, you'd make a DELETE request to your backend API.
-    console.log("Deleted Internship ID:", internship._id);
-    router.push("/dashboard/my-internships");
-  };
+  const data = internshipDetail.internship;
 
   return (
-    <div className="mx-auto px-4 py-8">
+    <div className="mx-auto px-4 py-8 h-screen">
       <div className="mb-6">
         <Link
           href="/dashboard/my-internships"
@@ -97,146 +47,69 @@ export default function InternshipDetailPage() {
         </Link>
       </div>
 
-      <div className="bg-card shadow-md border border-gray-600 rounded-lg p-6">
+      <div className="bg-card shadow-md border border-gray-700 rounded-lg p-6 ">
         <div className="flex justify-between items-center mb-4">
           <div>
-            {isEditing ? (
-              <input
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="text-3xl font-bold mb-2 bg-transparent border-b border-gray-300 focus:outline-none"
-              />
-            ) : (
-              <h1 className="text-3xl font-bold mb-2">{formData.title}</h1>
-            )}
-            <p className="text-xl text-gray-400">{formData.CompanyName}</p>
+            <h1 className="text-3xl font-bold mb-2 text-white">{data.title}</h1>
+            <p className="text-xl text-gray-400">{data.CompanyName}</p>
           </div>
-
-          {!isEditing ? (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="px-4 py-2 w-20 bg-primary cursor-pointer hover:bg-secondary transition-colors text-white rounded"
-            >
-              Edit
-            </button>
-          ) : (
-            <div className="flex gap-2">
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-green-600 text-white rounded"
-              >
-                Save
-              </button>
-              <button
-                onClick={handleCancel}
-                className="px-4 py-2 bg-gray-500 text-white rounded"
-              >
-                Cancel
-              </button>
-            </div>
-          )}
         </div>
 
         <div className="grid gap-6">
           <div>
-            <h2 className="text-xl font-semibold mb-4">Overview</h2>
-            {isEditing ? (
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="w-full p-2 border rounded"
-              />
-            ) : (
-              <p className="text-gray-400">{formData.description}</p>
-            )}
+            <h2 className="text-xl font-semibold mb-4 text-white">Overview</h2>
+            <p className="text-gray-400">{data.description}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-lg font-semibold mb-3">Details</h3>
-              <div className="space-y-2">
+              <h3 className="text-lg font-semibold mb-3 text-white">Details</h3>
+              <div className="space-y-2 text-gray-300">
                 <p>
-                  <strong>Department:</strong>{" "}
-                  {isEditing ? (
-                    <input
-                      name="department"
-                      value={formData.department}
-                      onChange={handleInputChange}
-                      className="border px-2 py-1 rounded bg-gray-600"
-                    />
-                  ) : (
-                    formData.department
-                  )}
+                  <strong>Department:</strong> {data.department}
                 </p>
                 <p>
-                  <strong>Location:</strong>{" "}
-                  {isEditing ? (
-                    <input
-                      name="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                      className="border px-2 py-1 rounded bg-gray-600"
-                    />
-                  ) : (
-                    formData.location
-                  )}
+                  <strong>Location:</strong> {data.location}
                 </p>
                 <p>
-                  <strong>Type:</strong>{" "}
-                  {formData.remote ? "Remote" : "On-site"}
+                  <strong>Type:</strong> {data.remote ? "Remote" : "On-site"}
                 </p>
                 <p>
-                  <strong>Compensation:</strong>{" "}
-                  {formData.paid ? "Paid" : "Unpaid"}
+                  <strong>Compensation:</strong> {data.paid ? "Paid" : "Unpaid"}
                 </p>
                 <p>
-                  <strong>Positions:</strong>{" "}
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      name="numPositions"
-                      value={formData.numPositions}
-                      onChange={handleInputChange}
-                      className="border px-2 py-1 rounded w-20 bg-gray-600"
-                    />
-                  ) : (
-                    formData.numPositions
-                  )}
+                  <strong>Positions:</strong> {data.numPositions}
                 </p>
               </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-3">Timeline</h3>
-              <div className="space-y-2">
-                {["startDate", "endDate", "applicationDeadline"].map(
-                  (dateField) => (
-                    <p key={dateField}>
-                      <strong>{dateField.replace(/([A-Z])/g, " $1")}:</strong>{" "}
-                      {isEditing ? (
-                        <input
-                          type="date"
-                          name={dateField}
-                          value={formData[dateField]}
-                          onChange={handleInputChange}
-                          className="border px-2 py-1 rounded bg-gray-600"
-                        />
-                      ) : (
-                        new Date(formData[dateField]).toLocaleDateString()
-                      )}
-                    </p>
-                  )
-                )}
+              <h3 className="text-lg font-semibold mb-3 text-white">
+                Timeline
+              </h3>
+              <div className="space-y-2 text-gray-300">
+                <p>
+                  <strong>Start Date:</strong>{" "}
+                  {new Date(data.startDate).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>End Date:</strong>{" "}
+                  {new Date(data.endDate).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>Application Deadline:</strong>{" "}
+                  {new Date(data.applicationDeadline).toLocaleDateString()}
+                </p>
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-3">Required Skills</h3>
+            <h3 className="text-lg font-semibold mb-3 text-white">
+              Required Skills
+            </h3>
             <div className="flex flex-wrap gap-2">
-              {formData.requiredSkills.map((skill, i) => (
+              {data.requiredSkills.map((skill: string, i: number) => (
                 <span
                   key={i}
                   className="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm"
@@ -245,15 +118,6 @@ export default function InternshipDetailPage() {
                 </span>
               ))}
             </div>
-          </div>
-
-          <div className="pt-6 border-t mt-4">
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-            >
-              Delete Internship
-            </button>
           </div>
         </div>
       </div>

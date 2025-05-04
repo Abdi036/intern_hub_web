@@ -59,24 +59,26 @@ export interface Company {
 
 // types.ts
 export interface Internship {
-  _id: string;
-  title: string;
-  CompanyName: string;
-  department: string;
-  startDate: string;
-  endDate: string;
-  description: string;
-  requiredSkills: string[];
-  location: string;
-  remote: boolean;
-  paid: boolean;
-  numPositions: number;
-  applicationDeadline: string;
-  companyId: {
+  internship: {
     _id: string;
+    title: string;
+    CompanyName: string;
+    department: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+    requiredSkills: string[];
+    location: string;
+    remote: boolean;
+    paid: boolean;
+    numPositions: number;
+    applicationDeadline: string;
+    companyId: {
+      _id: string;
+    };
+    applicants: string[];
+    createdAt: string;
   };
-  applicants: string[];
-  createdAt: string;
 }
 
 //applicationDetailResponse
@@ -306,5 +308,33 @@ export const dashboardApi = {
       }
     );
     return data;
+  },
+
+  async getAllMyPostedInternships() {
+    const { data } = await api.get<ApiResponse<{ internships: Internship[] }>>(
+      "/internships/allMypostedInterships"
+    );
+
+    return data.data.internships;
+  },
+
+  async getMypostedInternshipDetail(id: string) {
+    const { data } = await api.get<ApiResponse<Internship>>(
+      `/internships/posted/${id}`
+    );
+    return data.data;
+  },
+
+  async editMypostedInternship(id: string, formData: Internship) {
+    const { data } = await api.patch<ApiResponse<Internship>>(
+      `/internships/${id}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return data.data;
   },
 };
