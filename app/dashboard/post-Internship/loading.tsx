@@ -1,9 +1,9 @@
 import Spinner from "@/app/_components/Spinner";
 
-export default function loading() {
+export default function Loading() {
   return (
-    <div>
-      <Spinner/>
+    <div className="flex items-center justify-center h-[65vh]">
+      <Spinner text="Loading..." />
     </div>
-  )
+  );
 }

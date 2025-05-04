@@ -148,6 +148,22 @@ export interface Application {
   appliedAt: string;
 }
 
+export interface ApplicantsResponse {
+  applicationId: string;
+  studentId: string;
+  name: string;
+  email: string;
+  photo: string;
+  application: {
+    coverLetter: string;
+    portfolio: string;
+    appliedAt: string;
+  };
+  status: "pending" | "approved" | "rejected";
+  appliedAt: string;
+  
+}
+
 // Response wrapper type
 interface ApiResponse<T> {
   internship: Internship | PromiseLike<Internship>;
@@ -361,5 +377,13 @@ export const dashboardApi = {
   async deleteInternship(id: string) {
     const { data } = await api.delete<ApiResponse<null>>(`/internships/${id}`);
     return data;
+  },
+
+  async getAllApplicants(id: string) {
+    const { data } = await api.get<
+      ApiResponse<{ applicants: ApplicantsResponse[] }>
+    >(`internships/${id}/applicants`);
+
+    return data.data;
   },
 };
