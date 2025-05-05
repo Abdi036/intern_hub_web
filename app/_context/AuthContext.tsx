@@ -68,6 +68,8 @@ interface AuthContextType {
     status: string,
     applicationId: string
   ) => Promise<void>;
+  getAllUsers: () => Promise<User[]>;
+  deleteUser: (id: string) => Promise<void>;
 }
 
 // Create the context
@@ -470,6 +472,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getAllUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardApi.getAllusers();
+      return response;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch users";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteUser = async (id: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await dashboardApi.deleteUser(id);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to delete user";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -499,6 +532,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         getAllApplicants,
         getApplicant,
         updateApplicantStatus,
+        getAllUsers,
+        deleteUser,
       }}
     >
       {children}

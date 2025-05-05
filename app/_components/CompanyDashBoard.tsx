@@ -30,6 +30,7 @@ export default function CompanyDashBoard() {
     fetchData();
   }, []);
 
+
   const totalInternships = internships.length;
 
   const totalApplicants = internships.reduce(
@@ -46,7 +47,7 @@ export default function CompanyDashBoard() {
   const chartData = internships.map((internship) => ({
     internship:
       internship.title.length > 12
-        ? internship.title.slice(0, 7) + "..."  
+        ? internship.title.slice(0, 10) + "..."  
         : internship.title,
     applicants: internship.applicants.length,
   }));

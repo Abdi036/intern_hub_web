@@ -67,17 +67,19 @@ export default function Page() {
             <ArrowLeft />
             Back
           </Link>
-          <h1 className="text-2xl font-bold text-primary">Document Upload</h1>
-          <p className="text-gray-400 mt-1">
-            Upload your PDF files and portfolio information
-          </p>
+          <h1 className="text-2xl font-bold text-gray-200">Upload Document</h1>
         </div>
+        <p className="text-gray-400 mt-2">
+          Upload your PDF files and portfolio information
+        </p>
 
         {/* Form */}
         <div className="p-6 space-y-6">
           {/* PDF Upload Section */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-300">PDF Upload</h2>
+            <h2 className="text-xl font-semibold text-gray-300">
+              PDF Upload <span className="text-red-500">*</span>
+            </h2>
 
             <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center transition hover:border-primary">
               <div className="flex flex-col items-center justify-center space-y-3">

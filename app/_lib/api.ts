@@ -187,7 +187,6 @@ const tokenStorage = {
   },
 };
 
-
 export const authApi = {
   // Login user
   async signIn(email: string, password: string) {
@@ -403,6 +402,18 @@ export const dashboardApi = {
         status,
       }
     );
+    return data;
+  },
+
+  async getAllusers() {
+    const { data } = await api.get<ApiResponse<{ users: User[] }>>(
+      `/admin/users`
+    );
+    return data.data.users;
+  },
+
+  async deleteUser(id: string) {
+    const { data } = await api.delete<ApiResponse<null>>(`/admin/users/${id}`);
     return data;
   },
 };

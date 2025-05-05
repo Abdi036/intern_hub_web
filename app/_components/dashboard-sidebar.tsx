@@ -73,6 +73,11 @@ export function DashboardSidebar({
       href: "/dashboard/my-internships",
       icon: Building,
     },
+    {
+      title: "Users",
+      href: "/dashboard/users",
+      icon: User,
+    },
 
     { title: "Profile", href: "/dashboard/profile/personal", icon: User },
   ];
@@ -93,7 +98,11 @@ export function DashboardSidebar({
         item.title === "Profile"
       );
     } else if (userRole === "admin") {
-      return item.title === "Dashboard" || item.title === "Profile";
+      return (
+        item.title === "Dashboard" ||
+        item.title === "Profile" ||
+        item.title === "Users"
+      );
     }
     return false;
   });
