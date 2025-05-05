@@ -6,56 +6,76 @@ import { useAuth } from "@/app/_context/AuthContext";
 import { Internship } from "@/app/_lib/api";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 export default function Page() {
   const { getAllInternships, loading } = useAuth();
-
   const [internships, setInternships] = useState<Internship[]>([]);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [filteredInternships, setFilteredInternships] = useState<Internship[]>(
-    []
-  );
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const applyFilters = () => {
-    let filtered = internships;
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
-    if (selectedTypes.length > 0) {
-      filtered = filtered.filter((item) => {
-        const matchesRemote = selectedTypes.includes("remote")
-          ? item.remote
-          : true;
-        const matchesPaid = selectedTypes.includes("paid") ? item.paid : true;
-        const matchesFullTime = selectedTypes.includes("full-time")
-          ? item.department.toLowerCase().includes("full-time")
-          : true;
-        const matchesPartTime = selectedTypes.includes("part-time")
-          ? item.department.toLowerCase().includes("part-time")
-          : true;
+  const remote = searchParams.get("remote") === "true";
+  const paid = searchParams.get("paid") === "true";
 
-        return (
-          matchesRemote && matchesPaid && matchesFullTime && matchesPartTime
-        );
-      });
+  // Fetch internships with current query filters + page
+  const fetchInternships = async (pageNumber = 1) => {
+    try {
+      const query: Record<string, any> = { page: pageNumber };
+      if (searchParams.get("remote")) query.remote = remote;
+      if (searchParams.get("paid")) query.paid = paid;
+
+      const { internships: newInternships, pagination } =
+        await getAllInternships(query);
+
+      if (pageNumber === 1) {
+        setInternships(newInternships);
+      } else {
+        setInternships((prev) => [...prev, ...newInternships]);
+      }
+
+      setHasMore(pagination.page < pagination.pages);
+    } catch (error) {
+      console.error("Error fetching internships:", error);
     }
-
-    setFilteredInternships(filtered);
   };
 
+  // Fetch when query changes or page resets
   useEffect(() => {
-    const fetchInternships = async () => {
-      try {
-        const { internships } = await getAllInternships();
-        setInternships(internships);
-      } catch (error) {
-        console.error("Error fetching internships:", error);
-      }
-    };
-    fetchInternships();
-  }, []);
+    setPage(1);
+    setInternships([]); // Clear old results when filters change
+    fetchInternships(1);
+  }, [searchParams.toString()]);
 
+  const handleFilterChange = (type: string) => {
+    const current = new URLSearchParams(searchParams.toString());
+    if (current.get(type) === "true") {
+      current.delete(type);
+    } else {
+      current.set(type, "true");
+    }
+
+    // Reset page and push new URL
+    current.delete("page");
+    router.push(`${pathname}?${current.toString()}`);
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchInternships(nextPage);
+  };
+
+  const filteredInternships = internships.filter((internship) =>
+    internship.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
     <div className="space-y-4 md:space-y-6 p-4 sm:p-6 flex flex-col">
-      {/* title card */}
+      {/* Title */}
       <div>
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">
           Browse Internships
@@ -65,9 +85,8 @@ export default function Page() {
         </p>
       </div>
 
-      {/* main card */}
+      {/* Filters */}
       <div className="flex flex-col gap-6 w-full">
-        {/* Filters */}
         <div className="w-full">
           <div className="flex flex-col gap-4 md:flex-row md:items-end justify-between border border-gray-500 rounded-lg shadow-md p-4 sm:p-6 bg-card">
             {/* Search */}
@@ -85,11 +104,13 @@ export default function Page() {
                   type="search"
                   placeholder="Search internships..."
                   className="w-full pl-10 pr-4 py-2 border border-gray-500 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
             </div>
 
-            {/* Type */}
+            {/* Type Filters */}
             <div className="w-full md:w-1/2">
               <label className="block text-sm font-semibold text-gray-300 mb-2">
                 Type
@@ -100,15 +121,9 @@ export default function Page() {
                     <input
                       type="checkbox"
                       id={type}
-                      className="h-4 w-4 text-primary border-gray-500 rounded focus:ring-primary"
-                      checked={selectedTypes.includes(type)}
-                      onChange={() =>
-                        setSelectedTypes((prev) =>
-                          prev.includes(type)
-                            ? prev.filter((t) => t !== type)
-                            : [...prev, type]
-                        )
-                      }
+                      className="h-4 w-4 text-primary border-gray-500 rounded focus:ring-primary cursor-pointer"
+                      checked={searchParams.get(type) === "true"}
+                      onChange={() => handleFilterChange(type)}
                     />
                     <label
                       htmlFor={type}
@@ -120,32 +135,36 @@ export default function Page() {
                 ))}
               </div>
             </div>
-
-            {/* Apply Button */}
-            <div className="w-full md:w-auto">
-              <button
-                onClick={applyFilters}
-                className="w-full md:w-auto bg-primary hover:bg-secondary text-white text-sm font-medium py-2 px-4 rounded-md transition duration-200 cursor-pointer"
-              >
-                Apply Filters
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* Internships */}
-        {loading ? (
+        {/* Internship Cards */}
+        {loading && page === 1 ? (
           <div className="flex items-center justify-center w-full h-64">
             <Spinner text="Loading internships..." />
           </div>
         ) : (
           <>
-            {(filteredInternships.length > 0
-              ? filteredInternships
-              : internships
-            ).map((internship, index) => (
-              <InternshipCard key={index} internship={internship} />
-            ))}
+            {filteredInternships.length > 0 ? (
+              filteredInternships.map((internship, index) => (
+                <InternshipCard key={index} internship={internship} />
+              ))
+            ) : (
+              <p className="text-gray-300 text-center mt-4">
+                No internships match your search.
+              </p>
+            )}
+            {/* Load More Button */}
+            {hasMore && (
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={handleLoadMore}
+                  className="bg-primary hover:bg-secondary text-white text-sm font-medium py-2 px-4 rounded-md cursor-pointer transition duration-200"
+                >
+                  Load More
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

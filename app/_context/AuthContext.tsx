@@ -40,7 +40,7 @@ interface AuthContextType {
     currentPassword: string,
     newPassword: string
   ) => Promise<void>;
-  getAllInternships: () => Promise<{
+  getAllInternships: (queryParams: Record<string, number>) => Promise<{
     internships: Internship[];
     pagination: {
       total: number;
@@ -233,25 +233,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Get all the Internship
-  // const getAllInternships = async (): Promise<Internship[]> => {
-  //   try {
-  //     setLoading(true);
-  //     setError(null);
-  //     const data = await dashboardApi.getAllInternships();
-  //     return data.internships;
-  //   } catch (error) {
-  //     const errorMessage =
-  //       error instanceof Error ? error.message : "Failed to fetch internships";
-  //     setError(errorMessage);
-  //     return [];
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const getAllInternships = async (
-    queryParams = {}
+    queryParams: Record<string, number> = {}
   ): Promise<{
     internships: Internship[];
     pagination: {
@@ -474,7 +457,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     applicationId: string
   ) => {
     try {
-      setLoading(true);
       setError(null);
       await dashboardApi.updateApplicantStatus(status, applicationId);
     } catch (error) {
@@ -484,8 +466,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           : "Failed to update applicant status";
       setError(errorMessage);
       throw error;
-    } finally {
-      setLoading(false);
     }
   };
 

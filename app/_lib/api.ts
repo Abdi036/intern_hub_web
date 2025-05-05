@@ -187,6 +187,7 @@ const tokenStorage = {
   },
 };
 
+
 export const authApi = {
   // Login user
   async signIn(email: string, password: string) {
