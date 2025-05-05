@@ -3,13 +3,13 @@
 import { useAuth } from "@/app/_context/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 // import { useRouter } from "next/navigation";
 export default function Page() {
   const { applyForInternship, error } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
-
+  const router = useRouter();
   const { id } = useParams() as { id: string };
 
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -47,6 +47,7 @@ export default function Page() {
       }
       await applyForInternship(id, formData);
       alert("Application submitted successfully!");
+      router.back();
     } catch {}
     // router.push("/dashboard/internships");
     setPdfFile(null);

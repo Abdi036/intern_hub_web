@@ -1,37 +1,12 @@
-/* eslint-disable @next/next/no-img-element */
-// import Image from "next/image";
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
 import Spinner from "@/app/_components/Spinner";
 import { useAuth } from "@/app/_context/AuthContext";
 import { ApplicantsResponse } from "@/app/_lib/api";
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
-// const users = [
-//   {
-//     id: 1,
-//     name: "John Doe",
-//     email: "john@example.com",
-//     profilePhoto: "/profile1.jpg",
-//     status: "accepted",
-//   },
-//   {
-//     id: 2,
-//     name: "Jane Smith",
-//     email: "jane@example.com",
-//     profilePhoto: "/profile2.jpg",
-//     status: "Pending",
-//   },
-//   {
-//     id: 3,
-//     name: "Michael Brown",
-//     email: "michael@example.com",
-//     profilePhoto: "/profile3.jpg",
-//     status: "rejected",
-//   },
-// ];
 
 const statusColors: { [key: string]: string } = {
   accepted: "bg-green-400",
@@ -51,21 +26,23 @@ export default function UsersList() {
       try {
         const response = await getAllApplicants(id);
         setApplicants(response);
-      } catch {}
+      } catch (error) {
+        console.error("Failed to fetch applicants", error);
+      }
     };
 
     fetchApplicants();
   }, []);
 
-  console.log(applicants);
-  const handleUserClick = (applicantId: string) => {
-    router.push(`/dashboard/my-internships/${id}/applicants/${applicantId}`);
+  const handleUserClick = (studentId: string, applicationId: string) => {
+    router.push(
+      `/dashboard/my-internships/${id}/applicants/${studentId}?applicationId=${applicationId}`
+    );
   };
 
   return (
-    // <div className="flex items-center justify-center h-[65vh]">Applicants</div>
     <div className="p-6">
-      <div className="flex items-center gap-4 px-4 py-3 ">
+      <div className="flex items-center gap-4 px-4 py-3">
         <button
           onClick={router.back}
           className="flex items-center gap-2 text-primary text-lg transition-colors duration-200 cursor-pointer"
@@ -75,45 +52,54 @@ export default function UsersList() {
         </button>
         <h2 className="text-xl font-semibold text-white ml-2">Applicants</h2>
       </div>
+
       <div className="grid gap-4">
         {loading ? (
-          <div className="flex flex-col items-center justify-center h-[65vh] ">
+          <div className="flex flex-col items-center justify-center h-[65vh]">
             <Spinner text="Loading users" />
           </div>
         ) : (
-          <>
-            {applicants.map((applicant) => (
+          applicants.map((applicant) => {
+            const cardContent = (
+              <div className="relative bg-gray-800 p-4 rounded-lg shadow-md flex items-center gap-4 border border-gray-700">
+                {/* Status Badge */}
+                <span
+                  className={`absolute top-2 right-2 text-xs text-white px-2 py-1 rounded-full ${
+                    statusColors[applicant.status]
+                  }`}
+                >
+                  {applicant.status}
+                </span>
+
+                {/* Profile Image */}
+                <img
+                  src={`https://intern-hub-server.onrender.com/images/users/${applicant.photo}`}
+                  alt={applicant.name}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+
+                {/* Name and Email */}
+                <div>
+                  <p className="text-white font-semibold">{applicant.name}</p>
+                  <p className="text-sm text-gray-400">{applicant.email}</p>
+                </div>
+              </div>
+            );
+
+            return applicant.status === "pending" ? (
               <button
-                onClick={() => handleUserClick(applicant.studentId)}
                 key={applicant.studentId}
+                onClick={() =>
+                  handleUserClick(applicant.studentId, applicant.applicationId)
+                }
                 className="cursor-pointer hover:translate-y-[2px] transition-transform duration-200"
               >
-                <div className="relative bg-gray-800 p-4 rounded-lg shadow-md flex items-center gap-4 border border-gray-700">
-                  {/* Status Badge */}
-                  <span
-                    className={`absolute top-2 right-2 text-xs text-white px-2 py-1 rounded-full ${
-                      statusColors[applicant.status]
-                    }`}
-                  >
-                    {applicant.status}
-                  </span>
-
-                  {/* Profile Image */}
-                  <img
-                    src={`https://intern-hub-server.onrender.com/images/users/${applicant.photo}`}
-                    alt={applicant.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-
-                  {/* Name and Email */}
-                  <div>
-                    <p className="text-white font-semibold">{applicant.name}</p>
-                    <p className="text-sm text-gray-400">{applicant.email}</p>
-                  </div>
-                </div>
+                {cardContent}
               </button>
-            ))}
-          </>
+            ) : (
+              <div key={applicant.studentId}>{cardContent}</div>
+            );
+          })
         )}
       </div>
     </div>

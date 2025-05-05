@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import {
   Building,
-  ChevronDown,
   FileText,
   GraduationCap,
   Home,
@@ -13,7 +12,6 @@ import {
   User,
   Plus,
 } from "lucide-react";
-import { useState } from "react";
 import { useAuth } from "../_context/AuthContext";
 import Image from "next/image";
 
@@ -32,7 +30,6 @@ export function DashboardSidebar({
   const router = useRouter();
 
   const pathname = usePathname();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleSignOut = () => {
     signOut();
@@ -115,53 +112,35 @@ export function DashboardSidebar({
 
       {/* Footer */}
       <div className="border-t border-slate-700 p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {profilePhoto ? (
-              <Image
-                src={profilePhoto}
-                alt={userName}
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-full object-cover"
-              />
-            ) : (
-              <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 text-sm font-bold">
-                {userInitials}
-              </div>
-            )}
-
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">{userName}</span>
-              <span className="text-xs text-gray-500 capitalize">
-                {userRole}
-              </span>
+        <div className="flex items-center gap-3 mb-3">
+          {profilePhoto ? (
+            <Image
+              src={profilePhoto}
+              alt={userName}
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-full object-cover"
+            />
+          ) : (
+            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 text-sm font-bold">
+              {userInitials}
             </div>
-          </div>
+          )}
 
-          {/* Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-slate-500"
-            >
-              <ChevronDown className="h-4 w-4" />
-            </button>
-            {dropdownOpen && (
-              <div className="absolute right-0 bottom-full mb-2 w-40 rounded-md shadow-lg bg-secondary ring-1 ring-black ring-opacity-5 z-10">
-                <div className="py-1">
-                  <Link
-                    onClick={handleSignOut}
-                    href="/signin"
-                    className="flex items-center px-4 py-2 text-sm text-white hover:bg-slate-500"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign out
-                  </Link>
-                </div>
-              </div>
-            )}
+          <div className="flex flex-col">
+            <span className="text-sm font-medium">{userName}</span>
+            <span className="text-xs text-gray-500 capitalize">{userRole}</span>
           </div>
+        </div>
+
+        <div className="flex items-center w-full justify-center">
+          <button
+            onClick={handleSignOut}
+            className="mt-2 flex items-center gap-2 px-4 py-2 text-sm text-white bg-slate-800 hover:bg-slate-700 rounded-md cursor-pointer transition-colors duration-200"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </button>
         </div>
       </div>
     </aside>
