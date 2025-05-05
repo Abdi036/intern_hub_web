@@ -7,9 +7,10 @@ import { Internship } from "@/app/_lib/api";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 
 export default function Page() {
-  const { getAllInternships, loading } = useAuth();
+  const { getAllInternships, user, loading } = useAuth();
   const [internships, setInternships] = useState<Internship[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -47,7 +48,7 @@ export default function Page() {
   // Fetch when query changes or page resets
   useEffect(() => {
     setPage(1);
-    setInternships([]); // Clear old results when filters change
+    setInternships([]);
     fetchInternships(1);
   }, [searchParams.toString()]);
 
@@ -73,6 +74,27 @@ export default function Page() {
   const filteredInternships = internships.filter((internship) =>
     internship.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (user?.role !== "student") {
+    return (
+      <div className="flex flex-col items-center justify-center h-[65vh] px-4 text-center">
+        <span className="text-6xl p-5">🤨</span>
+        <h1 className="text-6xl font-extrabold text-red-500 mb-4">403</h1>
+        <h2 className="text-3xl font-semibold text-gray-400 mb-2">
+          Unauthorized Access
+        </h2>
+        <p className="text-gray-500 mb-6 max-w-md">
+          You do not have permission to view this page.
+        </p>
+        <Link
+          href="/dashboard"
+          className="px-6 py-2 bg-primary text-white rounded-md hover:bg-secondary transition-colors duration-200"
+        >
+          Go Back
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="space-y-4 md:space-y-6 p-4 sm:p-6 flex flex-col">
       {/* Title */}

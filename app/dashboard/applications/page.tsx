@@ -5,13 +5,13 @@ import { Application } from "@/app/_lib/api";
 
 import ApplicationCard from "@/app/_components/ApplicationCard";
 import Spinner from "@/app/_components/Spinner";
+import Link from "next/link";
 const tabs = ["all", "pending", "accepted", "rejected"];
 
 export default function ApplicationsPage() {
   const [selectedTab, setSelectedTab] = useState("all");
   const [applications, setApplications] = useState<Application[]>([]);
-
-  const { getAllApplicatons, loading } = useAuth();
+  const { getAllApplicatons, user, loading } = useAuth();
 
   const fetchApplications = async () => {
     try {
@@ -32,6 +32,27 @@ export default function ApplicationsPage() {
       : applications.filter(
           (app) => app.applicationStatus.toLowerCase() === selectedTab
         );
+
+  if (user?.role !== "student") {
+    return (
+      <div className="flex flex-col items-center justify-center h-[65vh] px-4 text-center">
+        <span className="text-6xl p-5">🤨</span>
+        <h1 className="text-6xl font-extrabold text-red-500 mb-4">403</h1>
+        <h2 className="text-3xl font-semibold text-gray-400 mb-2">
+          Unauthorized Access
+        </h2>
+        <p className="text-gray-500 mb-6 max-w-md">
+          You do not have permission to view this page.
+        </p>
+        <Link
+          href="/dashboard"
+          className="px-6 py-2 bg-primary text-white rounded-md hover:bg-secondary transition-colors duration-200"
+        >
+          Go Back
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-6">

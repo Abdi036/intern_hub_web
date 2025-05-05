@@ -2,10 +2,12 @@
 
 import { useAuth } from "@/app/_context/AuthContext";
 import { Internship } from "@/app/_lib/api";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function PostInternshipPage() {
   const { postinternship, user, loading } = useAuth();
+
   type InternshipFormData = Omit<
     Internship,
     "_id" | "applicants" | "createdAt"
@@ -87,6 +89,27 @@ export default function PostInternshipPage() {
       console.error("Failed to post internship:", error);
     }
   };
+
+  if (user?.role !== "company") {
+    return (
+      <div className="flex flex-col items-center justify-center h-[65vh] px-4 text-center">
+        <span className="text-6xl p-5">🤨</span>
+        <h1 className="text-6xl font-extrabold text-red-500 mb-4">403</h1>
+        <h2 className="text-3xl font-semibold text-gray-400 mb-2">
+          Unauthorized Access
+        </h2>
+        <p className="text-gray-500 mb-6 max-w-md">
+          You do not have permission to view this page.
+        </p>
+        <Link
+          href="/dashboard"
+          className="px-6 py-2 bg-primary text-white rounded-md hover:bg-secondary transition-colors duration-200"
+        >
+          Go Back
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">

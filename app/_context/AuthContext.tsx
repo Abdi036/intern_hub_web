@@ -147,6 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Sign out function
   const signOut = () => {
+    setError(null);
     authApi.signOut();
     localStorage.removeItem("userData");
     setIsAuthenticated(false);

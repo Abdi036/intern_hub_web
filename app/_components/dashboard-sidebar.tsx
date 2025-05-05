@@ -77,8 +77,26 @@ export function DashboardSidebar({
     { title: "Profile", href: "/dashboard/profile/personal", icon: User },
   ];
 
-  const menuItems = allMenuItems;
-
+  const menuItems = allMenuItems.filter((item) => {
+    if (userRole === "student") {
+      return (
+        item.title === "Dashboard" ||
+        item.title === "Browse Internships" ||
+        item.title === "My Applications" ||
+        item.title === "Profile"
+      );
+    } else if (userRole === "company") {
+      return (
+        item.title === "Dashboard" ||
+        item.title === "Post Internship" ||
+        item.title === "My Internships" ||
+        item.title === "Profile"
+      );
+    } else if (userRole === "admin") {
+      return item.title === "Dashboard" || item.title === "Profile";
+    }
+    return false;
+  });
   return (
     <aside className="flex h-screen flex-col w-64 border-r border-slate-700 bg-card">
       {/* Header */}
