@@ -196,15 +196,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const response = await authApi.updatePersonalInfo(formData);
 
+      // Ensure the response contains the updated photo
+      const updatedPhoto = response.data?.user?.photo;
+
       // Update the user state with new information
       setUser((prevUser) => {
         if (!prevUser) return null;
-        return {
+
+        const updatedUser = {
           ...prevUser,
           name: (formData.get("name") as string) || prevUser.name,
           email: (formData.get("email") as string) || prevUser.email,
-          photo: response.data?.photo || prevUser.photo,
+          photo: updatedPhoto || prevUser.photo,
         };
+
+        // Update localStorage with the new user data
+        localStorage.setItem("userData", JSON.stringify(updatedUser));
+
+        return updatedUser;
       });
     } catch (error) {
       const errorMessage =

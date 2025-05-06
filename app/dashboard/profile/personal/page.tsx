@@ -65,14 +65,6 @@ export default function PersonalInfoPage() {
   };
 
   // Format the photo URL
-  const getPhotoUrl = () => {
-    if (!photo)
-      return "https://intern-hub-server.onrender.com/images/users/default-user.jpg";
-    if (photo.startsWith("data:")) return photo;
-    if (photo === "default-user.jpg")
-      return "https://intern-hub-server.onrender.com/images/users/default-user.jpg";
-    return `https://intern-hub-server.onrender.com/images/users/${photo}`;
-  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -89,7 +81,7 @@ export default function PersonalInfoPage() {
         >
           {!imageError ? (
             <img
-              src={getPhotoUrl()}
+              src={photo || profileImage.src}
               alt="Profile"
               className="w-full h-full object-cover"
               onError={() => setImageError(true)}

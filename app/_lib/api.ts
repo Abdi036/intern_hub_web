@@ -247,15 +247,17 @@ export const authApi = {
   },
 
   async updatePersonalInfo(formData: FormData) {
-    const { data } = await api.patch<ApiResponse<{ photo: string }>>(
-      "/user/update-me",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const { data } = await api.patch<
+      ApiResponse<{
+        user: {
+          photo: string;
+        };
+      }>
+    >("/user/update-me", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return data;
   },
 

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Link from "next/link";
@@ -13,7 +14,6 @@ import {
   Plus,
 } from "lucide-react";
 import { useAuth } from "../_context/AuthContext";
-import Image from "next/image";
 
 interface DashboardSidebarProps {
   userRole: "student" | "company" | "admin";
@@ -26,7 +26,7 @@ export function DashboardSidebar({
   userName,
   userPhoto,
 }: DashboardSidebarProps) {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const router = useRouter();
 
   const pathname = usePathname();
@@ -116,6 +116,7 @@ export function DashboardSidebar({
         </div>
       </Link>
 
+
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <ul className="space-y-1">
@@ -141,8 +142,8 @@ export function DashboardSidebar({
       <div className="border-t border-slate-700 p-4">
         <div className="flex items-center gap-3 mb-3">
           {profilePhoto ? (
-            <Image
-              src={profilePhoto}
+            <img
+              src={user?.photo || profilePhoto}
               alt={userName}
               width={40}
               height={40}
