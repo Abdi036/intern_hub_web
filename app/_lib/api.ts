@@ -50,7 +50,6 @@ export interface User {
 }
 
 // Internship type
-// types.ts (or wherever you define your types)
 
 export interface Company {
   _id: string;
@@ -320,11 +319,11 @@ export const dashboardApi = {
   },
 
   async getApplications() {
-    const { data } = await api.get<
-      ApiResponse<{ applications: Application[] }>
-    >("/internships/my-applications");
+    const { data } = await api.get<ApiResponse<Application[]>>(
+      "/internships/my-applications"
+    );
 
-    return data.data.applications;
+    return data.data;
   },
 
   async getApplicationById(id: string) {

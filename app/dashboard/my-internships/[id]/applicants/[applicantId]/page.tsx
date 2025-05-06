@@ -58,7 +58,7 @@ export default function Page() {
       <div className="flex items-center gap-6 h-14 text-white p-4">
         <button
           onClick={router.back}
-          className="flex items-center text-primary hover:font-bold cursor-pointer transition-colors"
+          className="flex items-center text-primary text-lg cursor-pointer transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
           Back

@@ -7,6 +7,7 @@ import { ApplicantsResponse } from "@/app/_lib/api";
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import defaultUser from "@/public/default-user.jpg";
 
 const statusColors: { [key: string]: string } = {
   accepted: "bg-green-400",
@@ -73,7 +74,11 @@ export default function UsersList() {
 
                 {/* Profile Image */}
                 <img
-                  src={`https://intern-hub-server.onrender.com/images/users/${applicant.photo}`}
+                  src={
+                    applicant?.photo && applicant?.photo !== "default-user.jpg"
+                      ? applicant.photo
+                      : defaultUser.src
+                  }
                   alt={applicant.name}
                   className="w-12 h-12 rounded-full object-cover"
                 />

@@ -4,6 +4,7 @@ import type React from "react";
 import { useState } from "react";
 import { DashboardSidebar } from "../_components/dashboard-sidebar";
 import { useAuth } from "../_context/AuthContext";
+import { X } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -12,6 +13,7 @@ export default function DashboardLayout({
 }) {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const userName = user?.name.split(" ")[0];
 
   return (
     <div className="flex min-h-screen bg-gray-900">
@@ -31,12 +33,12 @@ export default function DashboardLayout({
       {/* Main Area with Sidebar Spacing */}
       <div className="flex flex-1 flex-col md:ml-64">
         <header className="sticky top-0 z-10 flex h-[77px] items-center justify-between bg-gray-800 border-b border-gray-700 px-6 shadow-sm">
-          <h1 className="text-3xl">Welcome, {user?.name || "User"}</h1>
+          <h1 className="text-3xl">Welcome, {userName}</h1>
           <button
             className="md:hidden text-gray-300"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {sidebarOpen ? "X" : "☰"}
+            {sidebarOpen ? <X /> : "☰"}
           </button>
         </header>
 

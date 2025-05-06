@@ -11,15 +11,17 @@ const tabs = ["all", "pending", "accepted", "rejected"];
 export default function ApplicationsPage() {
   const [selectedTab, setSelectedTab] = useState("all");
   const [applications, setApplications] = useState<Application[]>([]);
-  const { getAllApplicatons, user, loading } = useAuth();
+  const { getAllApplicatons, user, loading, setError } = useAuth();
 
   const fetchApplications = async () => {
     try {
       const response = await getAllApplicatons();
+      if (!response) {
+        setError(null);
+        return;
+      }
       setApplications(response);
-    } catch (error) {
-      console.error("Error fetching applications:", error);
-    }
+    } catch {}
   };
 
   useEffect(() => {

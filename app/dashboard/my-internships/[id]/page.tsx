@@ -92,7 +92,7 @@ export default function InternshipDetailPage() {
       <div className="mb-6 flex items-center gap-4">
         <Link
           href="/dashboard/my-internships"
-          className="text-primary hover:font-bold flex items-center gap-2"
+          className="text-primary text-lg flex items-center gap-2"
         >
           <ArrowLeft className="w-5 h-5" />
           Back

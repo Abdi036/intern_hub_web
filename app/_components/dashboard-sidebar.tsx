@@ -14,6 +14,7 @@ import {
   Plus,
 } from "lucide-react";
 import { useAuth } from "../_context/AuthContext";
+import defaultUser from "@/public/default-user.jpg";
 
 interface DashboardSidebarProps {
   userRole: "student" | "company" | "admin";
@@ -24,7 +25,6 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({
   userRole,
   userName,
-  userPhoto,
 }: DashboardSidebarProps) {
   const { signOut, user } = useAuth();
   const router = useRouter();
@@ -35,18 +35,6 @@ export function DashboardSidebar({
     signOut();
     router.push("/signin");
   };
-
-  const userInitials = userName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .substring(0, 2);
-
-  const profilePhoto =
-    userPhoto !== "default-user.jpg"
-      ? `https://intern-hub-server.onrender.com/images/users/${userPhoto}`
-      : `https://intern-hub-server.onrender.com/images/users/default-user.jpg`;
 
   const allMenuItems = [
     // Student menu items
@@ -116,7 +104,6 @@ export function DashboardSidebar({
         </div>
       </Link>
 
-
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <ul className="space-y-1">
@@ -141,19 +128,17 @@ export function DashboardSidebar({
       {/* Footer */}
       <div className="border-t border-slate-700 p-4">
         <div className="flex items-center gap-3 mb-3">
-          {profilePhoto ? (
-            <img
-              src={user?.photo || profilePhoto}
-              alt={userName}
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-full object-cover"
-            />
-          ) : (
-            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 text-sm font-bold">
-              {userInitials}
-            </div>
-          )}
+          <img
+            src={
+              user?.photo && user?.photo !== "default-user.jpg"
+                ? user.photo
+                : defaultUser.src
+            }
+            alt={userName}
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-full object-cover"
+          />
 
           <div className="flex flex-col">
             <span className="text-sm font-medium">{userName}</span>

@@ -7,7 +7,7 @@ import { User } from "@/app/_lib/api";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-
+import defaultUser from "@/public/default-user.jpg";
 export default function UsersPage() {
   const { getAllUsers, deleteUser, user, loading } = useAuth();
   const [usersList, setUsers] = useState<User[]>([]);
@@ -82,7 +82,11 @@ export default function UsersPage() {
             >
               <div className="flex items-center gap-4">
                 <img
-                  src={`https://intern-hub-server.onrender.com/images/users/${user.photo}`}
+                  src={
+                    user?.photo && user?.photo !== "default-user.jpg"
+                      ? user.photo
+                      : defaultUser.src
+                  }
                   alt={user.name}
                   className="w-12 h-12 rounded-full object-cover"
                 />
