@@ -125,7 +125,7 @@ export default function Signup() {
 
             {/* Role Selection */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium">I am a</label>
+              <label className="block text-sm font-medium">I am a: </label>
               <div className="flex gap-4">
                 {/* Student */}
                 <label className="flex items-center space-x-2 cursor-pointer">

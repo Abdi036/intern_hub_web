@@ -27,7 +27,7 @@ export default function StudentDashBoard() {
     const fetchData = async () => {
       try {
         const response = await getAllApplicatons();
-        setApplications(response.applications);
+        setApplications(response);
       } catch {}
     };
 

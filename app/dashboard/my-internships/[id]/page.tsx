@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Trash2Icon, PencilIcon, ArrowLeft, Eye } from "lucide-react";
 
 import { useAuth } from "@/app/_context/AuthContext";
-import { InternshipResponse } from "@/app/_lib/api";
+import { InternshipResponse, Internship } from "@/app/_lib/api"; // Assuming Internship is defined in your API types
 import Spinner from "@/app/_components/Spinner";
 
 export default function InternshipDetailPage() {
@@ -15,10 +15,11 @@ export default function InternshipDetailPage() {
 
   const { getMypostedInternshipDetail, editMyInternship, deleteInternship } =
     useAuth();
-  const [internshipDetail, setInternshipDetail] =
-    useState<InternshipResponse>();
+  const [internshipDetail, setInternshipDetail] = useState<
+    InternshipResponse | undefined
+  >();
   const [isEditing, setIsEditing] = useState(false);
-  const [updatedData, setUpdatedData] = useState<any>({});
+  const [updatedData, setUpdatedData] = useState<Partial<Internship>>({}); // Use Partial<Internship> for updatedData
 
   useEffect(() => {
     const fetchInternshipDetail = async () => {
@@ -26,7 +27,7 @@ export default function InternshipDetailPage() {
         const internship = await getMypostedInternshipDetail(id);
         setInternshipDetail(internship);
 
-        setUpdatedData((prev) =>
+        setUpdatedData((prev: Partial<Internship>) =>
           Object.keys(prev).length === 0 ? internship.internship : prev
         );
       } catch (error) {
@@ -35,9 +36,9 @@ export default function InternshipDetailPage() {
     };
 
     fetchInternshipDetail();
-  }, []);
+  }, [id, getMypostedInternshipDetail]);
 
-  const hasApplicants = internshipDetail?.internship?.applicants.length;
+  const hasApplicants = internshipDetail?.internship?.applicants?.length ?? 0;
 
   const handleViewApplicants = () => {
     router.push(`/dashboard/my-internships/${id}/applicants`);
@@ -58,19 +59,29 @@ export default function InternshipDetailPage() {
   };
 
   const handleInputChange = (
-    field: string,
+    field: keyof Internship,
     value: string | boolean | number
   ) => {
-    setUpdatedData((prev: any) => ({
+    setUpdatedData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
   const handleSave = async () => {
+    if (!internshipDetail) return; // Ensure internshipDetail is available
+
     try {
-      const updatedInternship = await editMyInternship(id, updatedData);
-      setInternshipDetail(updatedInternship);
+      // Merge updatedData with the existing internship data
+      const completeData: Internship = {
+        ...internshipDetail.internship,
+        ...updatedData,
+      };
+
+      const updatedInternship = await editMyInternship(id, completeData);
+      setInternshipDetail((prev) =>
+        prev ? { ...prev, internship: updatedInternship } : undefined
+      );
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating internship:", error);

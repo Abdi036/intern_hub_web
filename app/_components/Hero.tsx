@@ -3,6 +3,9 @@
 import Image from "next/image";
 import img1 from "@/public/pexels-fauxels-3184357.jpg";
 
+import propic1 from "@/public/pro-pic1.jpg";
+import propic2 from "@/public/pro-pic2.jpg";
+
 import { Building, GraduationCap, Users } from "lucide-react";
 import Button from "./Button";
 import { useRouter } from "next/navigation";
@@ -47,7 +50,7 @@ export default function Hero() {
               </h1>
               <p className="max-w-[600px] mx-auto text-lg md:text-xl text-gray-200">
                 InternHub connects talented students with leading companies for
-                meaningful internship opportunities that launch careers.
+                amazing internship opportunities that launch careers.
               </p>
               <div className="flex flex-col gap-4 min-[400px]:flex-row justify-center">
                 <Button
@@ -58,11 +61,11 @@ export default function Hero() {
               <div className="flex items-center justify-center gap-8 text-sm text-gray-200">
                 <div className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  <span>10,000+ Students</span>
+                  <span>100+ Students</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Building className="h-5 w-5" />
-                  <span>500+ Companies</span>
+                  <span>50+ Companies</span>
                 </div>
               </div>
             </div>
@@ -140,8 +143,8 @@ export default function Hero() {
                 The Leading Internship Platform
               </h2>
               <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                We&appos;ve helped thousands of students launch their careers
-                and companies find their next generation of talent.
+                We&apos;ve helped many students launch their careers and
+                companies find their next generation of talent.
               </p>
             </div>
           </div>
@@ -211,17 +214,25 @@ export default function Hero() {
             <div className="flex flex-col justify-between space-y-4 rounded-lg border bg-card p-6 shadow-sm">
               <div className="space-y-2">
                 <p className="text-muted-foreground">
-                  InternHub helped me land my dream internship at a top tech
+                  InternHub helped me land my dream internship at a good tech
                   company. The platform was easy to use and I received responses
-                  much faster than on other sites.
+                  much very fast.
                 </p>
               </div>
               <div className="flex items-center gap-4">
-                <div className="rounded-full bg-muted h-10 w-10"></div>
                 <div>
-                  <p className="text-sm font-medium">Sarah Johnson</p>
+                  <Image
+                    src={propic1}
+                    alt="pro-pic1"
+                    width={50}
+                    height={50}
+                    className="rounded-full bg-muted h-10 w-10"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Abdi Kumela</p>
                   <p className="text-xs text-muted-foreground">
-                    Computer Science Student
+                    Software Engineering Student
                   </p>
                 </div>
               </div>
@@ -230,14 +241,22 @@ export default function Hero() {
               <div className="space-y-2">
                 <p className="text-muted-foreground">
                   As a hiring manager, InternHub has streamlined our internship
-                  recruitment process. We&appos;ve found exceptional talent that
+                  recruitment process. We&apos;ve found exceptional talent that
                   has contributed real value to our company.
                 </p>
               </div>
               <div className="flex items-center gap-4">
-                <div className="rounded-full bg-muted h-10 w-10"></div>
                 <div>
-                  <p className="text-sm font-medium">Michael Chen</p>
+                  <Image
+                    src={propic2}
+                    alt="pro-pic1"
+                    width={50}
+                    height={50}
+                    className="rounded-full bg-muted h-10 w-10"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Robsen Teshome</p>
                   <p className="text-xs text-muted-foreground">
                     HR Director, TechCorp
                   </p>
@@ -267,16 +286,17 @@ export default function Hero() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 md:grid-cols-3 lg:grid-cols-5">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="flex items-center justify-center p-4">
-                <Image
-                  src={img1}
-                  width={160}
-                  height={80}
-                  alt={`Partner logo ${i}`}
-                  className="aspect-[2/1] overflow-hidden object-contain"
-                />
+          <div className="mx-auto grid items-center gap-6 py-12 md:grid-cols-3 lg:grid-cols-4">
+            {["Zulu", "AddisTech", "Simbo", "Backos"].map((partner, index) => (
+              <div
+                key={index}
+                className="flex flex-col justify-center items-center p-4 w-full text-lg font-semibold bg-card rounded-md shadow"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Building className="h-6 w-6" />
+                </div>
+
+                <div className="mt-2 text-slate-200 text-center">{partner}</div>
               </div>
             ))}
           </div>

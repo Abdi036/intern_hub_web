@@ -127,6 +127,10 @@ export interface ApplicationDetailResponse {
 // application type
 
 export interface Application {
+  applications: {
+    name: string;
+    email: string;
+  };
   applicationId: string;
   internshipId: string;
   title: string;
@@ -147,6 +151,9 @@ export interface Application {
   appliedAt: string;
 }
 
+export interface ApplicationsResponse {
+  applications: Application[];
+}
 export interface ApplicantsResponse {
   applicationId: string;
   studentId: string;
@@ -319,7 +326,7 @@ export const dashboardApi = {
   },
 
   async getApplications() {
-    const { data } = await api.get<ApiResponse<Application[]>>(
+    const { data } = await api.get<ApiResponse<ApplicationsResponse>>(
       "/internships/my-applications"
     );
 

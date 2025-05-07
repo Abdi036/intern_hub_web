@@ -312,7 +312,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
       const response = await dashboardApi.getApplications();
-      return response;
+      return response.applications;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to fetch applications";

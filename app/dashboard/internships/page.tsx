@@ -26,9 +26,12 @@ export default function Page() {
   // Fetch internships with current query filters + page
   const fetchInternships = async (pageNumber = 1) => {
     try {
-      const query: Record<string, any> = { page: pageNumber };
-      if (searchParams.get("remote")) query.remote = remote;
-      if (searchParams.get("paid")) query.paid = paid;
+      const query: Record<string, number> = {
+        page: pageNumber,
+      };
+
+      if (searchParams.get("remote")) query.remote = remote ? 1 : 0;
+      if (searchParams.get("paid")) query.paid = paid ? 1 : 0;
 
       const { internships: newInternships, pagination } =
         await getAllInternships(query);
