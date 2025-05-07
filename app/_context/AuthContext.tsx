@@ -40,7 +40,9 @@ interface AuthContextType {
     currentPassword: string,
     newPassword: string
   ) => Promise<void>;
-  getAllInternships: (queryParams: Record<string, number>) => Promise<{
+  getAllInternships: (
+    queryParams: Record<string, string | number | boolean>
+  ) => Promise<{
     internships: Internship[];
     pagination: {
       total: number;
@@ -246,7 +248,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const getAllInternships = async (
-    queryParams: Record<string, number> = {}
+    queryParams: Record<string, string | number | boolean> = {}
   ): Promise<{
     internships: Internship[];
     pagination: {
