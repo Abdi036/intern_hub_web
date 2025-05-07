@@ -27,7 +27,7 @@ export default function StudentDashBoard() {
     const fetchData = async () => {
       try {
         const response = await getAllApplicatons();
-        setApplications(response);
+        setApplications(response.applications);
       } catch {}
     };
 
@@ -81,7 +81,7 @@ export default function StudentDashBoard() {
       </div>
 
       {/* Applications Info */}
-      <div className="md:grid-cols-2 lg:grid-cols-7 mt-20">
+      <div className="md:grid-cols-2 lg:grid-cols-7 mt-[400px] lg:mt-8 md:mt-[150px]">
         <h2 className="text-xl font-semibold mb-2">Insights Overview</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -97,7 +97,7 @@ export default function StudentDashBoard() {
           </div>
 
           {/* Weekly Chart */}
-          <div className="bg-secondary p-4 shadow rounded-lg col-span-1 md:col-span-1">
+          <div className="bg-secondary p-4 shadow rounded-lg col-span-1 md:col-span-1 ">
             <p className="text-sm text-gray-200">Weekly Submission Trend</p>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={weeklyData}>

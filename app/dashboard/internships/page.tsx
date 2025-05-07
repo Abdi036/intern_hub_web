@@ -168,9 +168,15 @@ export default function Page() {
         ) : (
           <>
             {filteredInternships.length > 0 ? (
-              filteredInternships.map((internship, index) => (
-                <InternshipCard key={index} internship={internship} />
-              ))
+              filteredInternships
+                .sort(
+                  (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                )
+                .map((internship, index) => (
+                  <InternshipCard key={index} internship={internship} />
+                ))
             ) : (
               <p className="text-gray-300 text-center mt-4">
                 No internships match your search.

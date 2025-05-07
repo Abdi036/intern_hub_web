@@ -119,7 +119,7 @@ export default function ApplicationDetail() {
       {/* Application Details */}
       <div className="space-y-1 text-sm">
         <p>
-          <strong>Cover Letter:</strong>{" "}
+          <strong>Cover Letter: </strong>{" "}
           <a
             href={internship.application.coverLetter}
             className="text-blue-500 underline"
@@ -130,15 +130,19 @@ export default function ApplicationDetail() {
           </a>
         </p>
         <p>
-          <strong>Portfolio:</strong>{" "}
-          <a
-            href={internship.application.portfolio}
-            className="text-blue-500 underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {internship.application.portfolio}
-          </a>
+          {internship.application.portfolio && (
+            <>
+              <strong>Portfolio: </strong>
+              <a
+                href={internship.application.portfolio}
+                className="text-blue-500 underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {internship.application.portfolio}
+              </a>
+            </>
+          )}
         </p>
       </div>
     </div>

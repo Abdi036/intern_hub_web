@@ -20,7 +20,7 @@ export default function ApplicationsPage() {
         setError(null);
         return;
       }
-      setApplications(response);
+      setApplications(response.applications);
     } catch {}
   };
 

@@ -253,6 +253,7 @@ export default function PostInternshipPage() {
             type="text"
             name="companyId"
             defaultValue={formData.companyId._id ?? ""}
+            disabled={true}
             placeholder="Company ID"
             className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white cursor-not-allowed"
           />
