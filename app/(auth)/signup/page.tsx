@@ -4,10 +4,10 @@ import { Building, ArrowLeft, GraduationCap } from "lucide-react";
 import { useAuth } from "../../_context/AuthContext";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
 export default function Signup() {
   const { signUp, loading, error, setError } = useAuth();
   const router = useRouter();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -43,7 +43,7 @@ export default function Signup() {
         formData.password,
         formData.role
       );
-      router.push("/signin");
+      router.push(`/verify-email?email=${formData.email}`);
     } catch (error) {
       console.error("Signup failed:", error);
     }

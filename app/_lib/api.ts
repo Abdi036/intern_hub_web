@@ -219,6 +219,14 @@ export const authApi = {
     return data;
   },
 
+  //verify email
+  async verifyEmail(email: string, otp: string) {
+    const { data } = await api.post<ApiResponse<null>>("/user/verify-email", {
+      email,
+      otp,
+    });
+    return data;
+  },
   // Check if user is logged in
   isAuthenticated() {
     return tokenStorage.hasToken();
