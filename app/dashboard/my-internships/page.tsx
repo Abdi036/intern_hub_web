@@ -47,63 +47,85 @@ export default function CompanyInternshipsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        My Posted Internships
-      </h1>
+    <>
       {loading ? (
         <div className="flex justify-center items-center h-[80vh]">
           <Spinner text="loading your internship" />
         </div>
+      ) : myInternships.length !== 0 ? (
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <h1 className="text-3xl font-bold mb-6 text-center">
+            My Posted Internships
+          </h1>
+
+          <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-6">
+            {myInternships
+              .sort(
+                (a, b) =>
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+              )
+              .map((intern: Internship) => (
+                <div
+                  key={intern._id}
+                  className="bg-card shadow-md border border-gray-600 rounded-lg p-5 hover:shadow-lg transition-all duration-300"
+                >
+                  <h2 className="text-xl font-semibold mb-1">{intern.title}</h2>
+                  <p className="text-sm text-gray-400">{intern.department}</p>
+                  <p className="text-xs text-gray-500 mb-2">
+                    {new Date(intern.startDate).toLocaleDateString()} -{" "}
+                    {new Date(intern.endDate).toLocaleDateString()}
+                  </p>
+
+                  <p className="text-sm text-gray-400 line-clamp-2 mb-3">
+                    {intern.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 text-xs mb-2">
+                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                      {intern.remote ? "Remote" : "On-site"}
+                    </span>
+                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                      {intern.paid ? "Paid" : "Unpaid"}
+                    </span>
+                    <span className="bg-gray-200 text-gray-400 px-2 py-1 rounded-full">
+                      {intern.location}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="text-sm">
+                      <span className="font-medium">Positions:</span>{" "}
+                      {intern.numPositions}
+                    </div>
+                    <Link
+                      href={`/dashboard/my-internships/${intern._id}`}
+                      className="bg-primary flex gap-2 items-center justify-center text-white px-4 py-2 rounded hover:bg-secondary text-sm font-medium transition-colors"
+                    >
+                      <Eye className="h-6 w-6" />
+                      View Details
+                    </Link>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
       ) : (
-        <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-6">
-          {myInternships
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .map((intern: Internship) => (
-              <div
-          key={intern._id}
-          className="bg-card shadow-md border border-gray-600 rounded-lg p-5 hover:shadow-lg transition-all duration-300"
-              >
-          <h2 className="text-xl font-semibold mb-1">{intern.title}</h2>
-          <p className="text-sm text-gray-400">{intern.department}</p>
-          <p className="text-xs text-gray-500 mb-2">
-            {new Date(intern.startDate).toLocaleDateString()} -{" "}
-            {new Date(intern.endDate).toLocaleDateString()}
+        <div className="flex justify-center items-center h-[80vh] flex-col text-center">
+          <h1 className="text-3xl font-bold mb-6 text-center">
+            No Internships Posted Yet
+          </h1>
+          <p className="text-gray-500 mb-6 max-w-md text-center">
+            You haven&apos;t posted any internships yet. Start by creating one!
           </p>
-
-          <p className="text-sm text-gray-400 line-clamp-2 mb-3">
-            {intern.description}
-          </p>
-
-          <div className="flex flex-wrap gap-2 text-xs mb-2">
-            <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">
-              {intern.remote ? "Remote" : "On-site"}
-            </span>
-            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-              {intern.paid ? "Paid" : "Unpaid"}
-            </span>
-            <span className="bg-gray-200 text-gray-400 px-2 py-1 rounded-full">
-              {intern.location}
-            </span>
-          </div>
-
-          <div className="flex justify-between items-center mt-4">
-            <div className="text-sm">
-              <span className="font-medium">Positions:</span>{" "}
-              {intern.numPositions}
-            </div>
-            <Link
-              href={`/dashboard/my-internships/${intern._id}`}
-              className="bg-primary flex gap-2 items-center justify-center text-white px-4 py-2 rounded hover:bg-secondary text-sm font-medium transition-colors"
-            >
-              <Eye className="h-6 w-6" />
-              View Details
-            </Link>
-          </div>
-              </div>
-            ))}
+          <Link
+            href="/dashboard/post-Internship"
+            className="px-6 py-2 bg-primary text-white rounded-md hover:bg-secondary transition-colors duration-200"
+          >
+            Create Internship
+          </Link>
         </div>
       )}
-    </div>
+    </>
   );
 }

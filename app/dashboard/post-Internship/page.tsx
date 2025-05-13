@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function PostInternshipPage() {
-  const { postinternship, user, loading } = useAuth();
+  const { postinternship, user, loading, error } = useAuth();
 
   type InternshipFormData = Omit<
     Internship,
@@ -127,12 +127,14 @@ export default function PostInternshipPage() {
             type="text"
             name="title"
             placeholder="Internship Title"
+            required
             value={formData.title}
             onChange={handleChange}
             className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
           />
           <input
             type="text"
+            required
             name="CompanyName"
             placeholder="Company Name"
             value={formData.CompanyName}
@@ -144,6 +146,7 @@ export default function PostInternshipPage() {
             name="department"
             placeholder="Department"
             value={formData.department}
+            required
             onChange={handleChange}
             className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
           />
@@ -159,6 +162,7 @@ export default function PostInternshipPage() {
               <input
                 type="date"
                 name="startDate"
+                required
                 value={formData.startDate}
                 onChange={handleChange}
                 className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
@@ -174,6 +178,7 @@ export default function PostInternshipPage() {
               <input
                 type="date"
                 name="endDate"
+                required
                 value={formData.endDate}
                 onChange={handleChange}
                 className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
@@ -186,6 +191,7 @@ export default function PostInternshipPage() {
             placeholder="Internship Description"
             value={formData.description}
             onChange={handleChange}
+            required
             className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
             rows={5}
           />
@@ -193,6 +199,7 @@ export default function PostInternshipPage() {
           <input
             type="text"
             name="location"
+            required
             placeholder="Location"
             value={formData.location}
             onChange={handleChange}
@@ -228,6 +235,7 @@ export default function PostInternshipPage() {
           <input
             type="number"
             name="numPositions"
+            required
             min={1}
             value={Number(formData.numPositions)}
             onChange={handleChange}
@@ -243,6 +251,7 @@ export default function PostInternshipPage() {
           </label>
           <input
             type="date"
+            required
             name="applicationDeadline"
             value={formData.applicationDeadline}
             onChange={handleChange}
@@ -314,6 +323,25 @@ export default function PostInternshipPage() {
           </button>
         </div>
       </form>
+      {error && (
+        <div
+          className="mt-4 text-gray-200 border-2 p-3 border-gray-400 bg-red-500 text-center"
+          style={{ animation: "fadeOut 5s forwards" }}
+        >
+          <p>{error}</p>
+        </div>
+      )}
+      <style jsx>{`
+        @keyframes fadeOut {
+          0% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0;
+            display: none;
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {
   LogOut,
   User,
   Plus,
+  Check,
 } from "lucide-react";
 import { useAuth } from "../_context/AuthContext";
 import defaultUser from "@/public/default-user.jpg";
@@ -62,6 +63,11 @@ export function DashboardSidebar({
       icon: Building,
     },
     {
+      title: "Approval Request",
+      href: "/dashboard/approval-request",
+      icon: Check,
+    },
+    {
       title: "Users",
       href: "/dashboard/users",
       icon: User,
@@ -83,6 +89,7 @@ export function DashboardSidebar({
         item.title === "Dashboard" ||
         item.title === "Post Internship" ||
         item.title === "My Internships" ||
+        item.title === "Approval Request" ||
         item.title === "Profile"
       );
     } else if (userRole === "admin") {
