@@ -4,6 +4,8 @@ import { Building, ArrowLeft, GraduationCap } from "lucide-react";
 import { useAuth } from "../../_context/AuthContext";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+
 export default function Signup() {
   const { signUp, loading, error, setError } = useAuth();
   const router = useRouter();
@@ -15,6 +17,7 @@ export default function Signup() {
     role: "",
   });
   const [showError, setShowError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -106,7 +109,7 @@ export default function Signup() {
             </div>
 
             {/* Password */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <label htmlFor="password" className="block text-sm font-medium">
                 Password
               </label>
@@ -121,6 +124,35 @@ export default function Signup() {
                 placeholder="Create a password"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
               />
+            </div> */}
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium">
+                  Password
+                </label>
+              </div>
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white cursor-pointer"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             {/* Role Selection */}
@@ -128,7 +160,7 @@ export default function Signup() {
               <label className="block text-sm font-medium">I am a: </label>
               <div className="flex gap-4">
                 {/* Student */}
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className="flex items-center space-x-2">
                   <input
                     type="radio"
                     id="student"
@@ -136,7 +168,7 @@ export default function Signup() {
                     value="student"
                     checked={formData.role === "student"}
                     onChange={handleChange}
-                    className="h-4 w-4 text-primary focus:ring-primary"
+                    className="h-4 w-4 text-primary focus:ring-primary cursor-pointer"
                   />
                   <span className="flex items-center gap-1 text-sm font-medium">
                     <GraduationCap className="h-4 w-4" />
@@ -145,7 +177,7 @@ export default function Signup() {
                 </label>
 
                 {/* Company */}
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className="flex items-center space-x-2">
                   <input
                     type="radio"
                     id="company"
@@ -153,7 +185,7 @@ export default function Signup() {
                     value="company"
                     checked={formData.role === "company"}
                     onChange={handleChange}
-                    className="h-4 w-4 text-primary focus:ring-primary"
+                    className="h-4 w-4 text-primary focus:ring-primary cursor-pointer"
                   />
                   <span className="flex items-center gap-1 text-sm font-medium">
                     <Building className="h-4 w-4" />

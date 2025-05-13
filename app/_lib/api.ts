@@ -227,6 +227,13 @@ export const authApi = {
     });
     return data;
   },
+
+  async reSendotp(email: string) {
+    const { data } = await api.post<ApiResponse<null>>("/user/resend-otp", {
+      email,
+    });
+    return data;
+  },
   // Check if user is logged in
   isAuthenticated() {
     return tokenStorage.hasToken();

@@ -9,7 +9,7 @@ export default function OtpVerification() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const email = searchParams.get("email") || "";
-  const { verifyEmail, error, loading } = useAuth();
+  const { verifyEmail, reSendotp, error, loading } = useAuth();
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const [successMsg, setSuccessMsg] = useState<boolean>(false);
 
@@ -49,12 +49,12 @@ export default function OtpVerification() {
 
     // Validate OTP
     if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
-      return; // Rely on error from useAuth for invalid OTP
+      return;
     }
 
     // Validate email
     if (!email) {
-      return; // Rely on error from useAuth for missing email
+      return;
     }
 
     try {
@@ -62,10 +62,17 @@ export default function OtpVerification() {
       setSuccessMsg(true);
       setTimeout(() => {
         router.push("/signin");
-      }, 1500); // Delay navigation to show success message briefly
+      }, 1500);
     } catch (err) {
       console.error("Verification error:", err);
-      // Error is handled by useAuth's error state
+    }
+  };
+
+  const handleResendotp = async (email: string) => {
+    try {
+      await reSendotp(email);
+    } catch (err) {
+      console.error("Resend OTP error:", err);
     }
   };
 
@@ -111,8 +118,8 @@ export default function OtpVerification() {
 
             {/* Success Message */}
             {successMsg && (
-              <div className="p-3 bg-green-300 border border-white rounded-md">
-                <p className="text-white text-sm text-center">
+              <div className="p-3 bg-green-500 border border-white rounded-md">
+                <p className="text-gray-200 text-sm text-center">
                   Email Verified Successfully
                 </p>
               </div>
@@ -138,7 +145,11 @@ export default function OtpVerification() {
           {/* Resend OTP */}
           <div className="mt-5 text-center text-sm text-muted-foreground">
             Didn&apos;t receive the code?{" "}
-            <button className="text-primary font-medium hover:underline underline-offset-4">
+            <button
+              disabled={loading}
+              onClick={() => handleResendotp(email)}
+              className="text-primary font-medium hover:underline underline-offset-4 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               Resend OTP
             </button>
           </div>

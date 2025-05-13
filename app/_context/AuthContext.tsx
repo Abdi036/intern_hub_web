@@ -73,6 +73,7 @@ interface AuthContextType {
   getAllUsers: () => Promise<User[]>;
   deleteUser: (id: string) => Promise<void>;
   verifyEmail: (email: string, otp: string) => Promise<void>;
+  reSendotp: (email: string) => Promise<void>;
 }
 
 // Create the context
@@ -158,6 +159,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to verify email";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const reSendotp = async (email: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await authApi.reSendotp(email);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to resend OTP";
       setError(errorMessage);
       throw error;
     } finally {
@@ -542,6 +558,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signUp,
         signOut,
         verifyEmail,
+        reSendotp,
         setError,
         forgotPassword,
         resetPassword,
