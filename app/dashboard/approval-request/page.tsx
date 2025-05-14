@@ -117,26 +117,30 @@ export default function UploadImagePage() {
           <div className="pt-4">
             <button
               type="button"
-              disabled={user?.approved === "pending" || isSubmitting}
+              disabled={
+                user?.approved === "approved" ||
+                user?.approved === "rejected" ||
+                isSubmitting
+              }
               onClick={handleSubmit}
               className={`w-full cursor-pointer ${
                 isSubmitting ? "bg-gray-600" : "bg-primary hover:bg-secondary"
-              } text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-300 focus:ring-offset-2 focus:ring-offset-gray-800 transition-color`}
+              } text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-300 focus:ring-offset-2 focus:ring-offset-gray-800 transition-color disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               {isSubmitting ? "Uploading..." : "Submit"}
             </button>
-            {uploadMessage && (
-              <p
-                className={`mt-2 text-center ${
-                  uploadMessage.includes("successful")
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
-              >
-                {uploadMessage}
-              </p>
-            )}
           </div>
+          {uploadMessage && (
+            <p
+              className={`mt-2 text-center ${
+                uploadMessage.includes("successful")
+                  ? "text-green-500"
+                  : "text-red-500"
+              }`}
+            >
+              {uploadMessage}
+            </p>
+          )}
         </div>
       </div>
     </div>

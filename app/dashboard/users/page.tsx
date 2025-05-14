@@ -124,10 +124,12 @@ export default function UsersPage() {
                 </div>
                 {user.role !== "admin" && (
                   <button
-                    onClick={() => handleDeleteUser(user._id)}
+                    onClick={() => {
+                      handleDeleteUser(user._id);
+                    }}
                     className="flex items-center justify-center gap-2 cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
                   >
-                    <Trash2 className="h-5 w-5 " />
+                    <Trash2 className="h-5 w-5" />
                     Delete
                   </button>
                 )}
