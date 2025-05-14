@@ -1,13 +1,16 @@
 "use client";
 
+import { useAuth } from "@/app/_context/AuthContext";
 import Image from "next/image";
 import { useState } from "react";
 
 export default function UploadImagePage() {
+  const { approvalRequest, user } = useAuth();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
 
-  console.log(selectedImage);
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
@@ -18,19 +21,59 @@ export default function UploadImagePage() {
     }
   };
 
+  const handleSubmit = async () => {
+    if (!selectedImage) {
+      alert("Please select an image first.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("approvalLetter", selectedImage);
+
+    try {
+      setIsSubmitting(true);
+      setUploadMessage(null);
+      await approvalRequest(formData);
+      setUploadMessage("Upload successful!");
+      setSelectedImage(null);
+      setImagePreview(null);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      setUploadMessage("Upload failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="bg-gray-900 text-gray-200 w-full p-4 min-h-screen">
       <div className="w-full rounded-xl shadow-2xl overflow-hidden">
-        <p className="text-gray-400 mt-2">
-          Upload your Approval Letter image file (JPG, PNG, etc.)
-        </p>
+        <div className="flex items-center justify-between p-6">
+          <p className="text-gray-400 mt-2">
+            Upload your Approval Letter image file (JPG, PNG, etc.)
+          </p>
+
+          <div
+            className={`${
+              user?.approved === "pending"
+                ? "bg-yellow-400"
+                : user?.approved === "approved"
+                ? "bg-green-500"
+                : user?.approved === "rejected"
+                ? "bg-red-500"
+                : "bg-gray-400"
+            } rounded-full px-4 py-1 text-sm font-semibold text-gray-900`}
+          >
+            <h1 className="text-gray-600">{user?.approved}</h1>
+          </div>
+        </div>
 
         {/* Form */}
         <div className="p-6 space-y-6">
           {/* Image Upload Section */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-300">
-              Image Upload <span className="text-red-500">*</span>
+              Approval Letter Upload <span className="text-red-500">*</span>
             </h2>
 
             <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center transition hover:border-primary">
@@ -40,9 +83,10 @@ export default function UploadImagePage() {
                 <label className="px-4 py-2 bg-primary hover:bg-secondary rounded-md cursor-pointer transition">
                   <span>Browse Files</span>
                   <input
+                    disabled={user?.approved === "pending"}
                     type="file"
                     accept="image/*"
-                    className="hidden"
+                    className="hidden disabled:cursor-not-allowed"
                     onChange={handleImageChange}
                   />
                 </label>
@@ -73,10 +117,25 @@ export default function UploadImagePage() {
           <div className="pt-4">
             <button
               type="button"
-              className="w-full cursor-pointer bg-primary hover:bg-secondary text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-300 focus:ring-offset-2 focus:ring-offset-gray-800 transition-color"
+              disabled={user?.approved === "pending" || isSubmitting}
+              onClick={handleSubmit}
+              className={`w-full cursor-pointer ${
+                isSubmitting ? "bg-gray-600" : "bg-primary hover:bg-secondary"
+              } text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-300 focus:ring-offset-2 focus:ring-offset-gray-800 transition-color`}
             >
-              Submit
+              {isSubmitting ? "Uploading..." : "Submit"}
             </button>
+            {uploadMessage && (
+              <p
+                className={`mt-2 text-center ${
+                  uploadMessage.includes("successful")
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {uploadMessage}
+              </p>
+            )}
           </div>
         </div>
       </div>

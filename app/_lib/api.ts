@@ -47,6 +47,7 @@ export interface User {
   email: string;
   role: string;
   photo: string | null;
+  approved:string
 }
 
 // Internship type
@@ -437,6 +438,20 @@ export const dashboardApi = {
 
   async deleteUser(id: string) {
     const { data } = await api.delete<ApiResponse<null>>(`/admin/users/${id}`);
+    return data;
+  },
+
+  // api.ts
+  async approvalRequest(approvalLetter: FormData) {
+    const { data } = await api.post<ApiResponse<null>>(
+      `/user/upload-approval-letter`,
+      approvalLetter,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return data;
   },
 };

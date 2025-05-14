@@ -74,6 +74,7 @@ interface AuthContextType {
   deleteUser: (id: string) => Promise<void>;
   verifyEmail: (email: string, otp: string) => Promise<void>;
   reSendotp: (email: string) => Promise<void>;
+  approvalRequest: (approvalLetter: FormData) => Promise<void>;
 }
 
 // Create the context
@@ -135,11 +136,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         photo: response.data.photo || null,
       };
       setUser(userData);
-      const { name, email: userEmail, role, photo, _id: id } = userData;
+      const {
+        name,
+        email: userEmail,
+        role,
+        photo,
+        _id: id,
+        approved,
+      } = userData;
       localStorage.setItem(
         "userData",
-        JSON.stringify({ name, email: userEmail, role, photo, _id: id })
+        JSON.stringify({
+          name,
+          email: userEmail,
+          role,
+          photo,
+          _id: id,
+          approved,
+        })
       );
+      
       setIsAuthenticated(true);
     } catch (error) {
       const errorMessage =
@@ -546,6 +562,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const approvalRequest = async (approvalLetter: FormData) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await dashboardApi.approvalRequest(approvalLetter);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to send approval request";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -579,6 +612,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updateApplicantStatus,
         getAllUsers,
         deleteUser,
+        approvalRequest,
       }}
     >
       {children}
