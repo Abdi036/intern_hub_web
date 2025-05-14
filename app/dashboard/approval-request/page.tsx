@@ -50,7 +50,11 @@ export default function UploadImagePage() {
       <div className="w-full rounded-xl shadow-2xl overflow-hidden">
         <div className="flex items-center justify-between p-6">
           <p className="text-gray-400 mt-2">
-            Upload your Approval Letter image file (JPG, PNG, etc.)
+            <span className="text-2xl font-bold">Note: </span>
+            Take a photo of your approval letter and upload it here.Your
+            approval Image should have your company seal on it and should be
+            clear,readable and in good quality Upload your Approval Letter image
+            file (JPG, PNG, etc.)
           </p>
 
           <div
