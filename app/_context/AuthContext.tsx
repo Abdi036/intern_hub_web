@@ -16,6 +16,7 @@ import {
   ApplicationDetailResponse,
   InternshipResponse,
   ApplicantsResponse,
+  companyDetail,
 } from "../_lib/api";
 
 // Simple auth context type
@@ -75,6 +76,8 @@ interface AuthContextType {
   verifyEmail: (email: string, otp: string) => Promise<void>;
   reSendotp: (email: string) => Promise<void>;
   approvalRequest: (approvalLetter: FormData) => Promise<void>;
+  getUser: (id: string) => Promise<companyDetail>;
+  approveCompany: (id: string, status: string) => Promise<void>;
 }
 
 // Create the context
@@ -155,7 +158,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           approved,
         })
       );
-      
+
       setIsAuthenticated(true);
     } catch (error) {
       const errorMessage =
@@ -579,6 +582,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getUser = async (id: string): Promise<companyDetail> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dashboardApi.getUser(id);
+      // Ensure the returned object matches companyDetail interface
+      return { user: response };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch user";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const approveCompany = async (id: string, status: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await dashboardApi.approveCompany(id, status);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to approve company";
+      setError(errorMessage);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -613,6 +648,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         getAllUsers,
         deleteUser,
         approvalRequest,
+        getUser,
+        approveCompany,
       }}
     >
       {children}

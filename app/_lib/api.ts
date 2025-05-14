@@ -47,7 +47,20 @@ export interface User {
   email: string;
   role: string;
   photo: string | null;
-  approved:string
+  approved: string;
+}
+
+export interface companyDetail {
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+    photo: string | null;
+    approved: string;
+    approvalLetter: string;
+    isVerified: boolean;
+  };
 }
 
 // Internship type
@@ -450,6 +463,23 @@ export const dashboardApi = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+      }
+    );
+    return data;
+  },
+
+  async getUser(id: string) {
+    const { data } = await api.get<ApiResponse<companyDetail>>(
+      `/admin/users/${id}`
+    );
+    return data.data.user;
+  },
+
+  async approveCompany(id: string, status: string) {
+    const { data } = await api.patch<ApiResponse<null>>(
+      `/admin/users/${id}/approve-company`,
+      {
+        status,
       }
     );
     return data;

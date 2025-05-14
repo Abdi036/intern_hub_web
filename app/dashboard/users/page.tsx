@@ -75,42 +75,78 @@ export default function UsersPage() {
         </div>
       ) : (
         <div className="grid gap-4 px-4">
-          {usersList.map((user) => (
-            <div
-              key={user._id}
-              className="relative  bg-gray-800 p-4 rounded-lg shadow-md flex items-center justify-between gap-4 border border-gray-700 transition-transform duration-200"
-            >
-              <div className="flex items-center gap-4">
-                <img
-                  src={
-                    user?.photo && user?.photo !== "default-user.jpg"
-                      ? user.photo
-                      : defaultUser.src
-                  }
-                  alt={user.name}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-
-                {/* Name, Email, Role */}
-                <div>
-                  <p className="text-white font-semibold">{user.name}</p>
-                  <p className="text-sm text-gray-400">{user.email}</p>
-                  <span className="text-xs mt-1 inline-block text-green-400 bg-green-900 px-2 py-1 rounded-full capitalize">
-                    {user.role}
-                  </span>
+          {usersList.map((user) => {
+            const isCompany = user.role === "company";
+            const userCard = (
+              <div
+                key={user._id}
+                className={`relative bg-gray-800 p-4 rounded-lg shadow-md flex items-center justify-between gap-4 border border-gray-700 transition-transform duration-200 ${
+                  isCompany
+                    ? "cursor-pointer hover:ring-2 hover:ring-primary"
+                    : ""
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <img
+                    src={
+                      user?.photo && user?.photo !== "default-user.jpg"
+                        ? user.photo
+                        : defaultUser.src
+                    }
+                    alt={user.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="text-white font-semibold">{user.name}</p>
+                    <p className="text-sm text-gray-400">{user.email}</p>
+                    <span className="text-xs mt-1 inline-block text-green-400 bg-green-900 px-2 py-1 rounded-full capitalize">
+                      {user.role}
+                    </span>
+                    {"   "}
+                    {user.role === "company" && (
+                      <span
+                        className={`text-xs mt-1 inline-block px-2 py-1 rounded-full capitalize
+                          ${
+                            user.approved === "pending"
+                              ? "text-yellow-400 bg-yellow-900"
+                              : user.approved === "approved"
+                              ? "text-green-400 bg-green-900"
+                              : user.approved === "rejected"
+                              ? "text-red-400 bg-red-900"
+                              : "text-gray-400 bg-gray-700"
+                          }
+                        `}
+                      >
+                        {user.approved}
+                      </span>
+                    )}
+                  </div>
                 </div>
+                {user.role !== "admin" && (
+                  <button
+                    onClick={() => handleDeleteUser(user._id)}
+                    className="flex items-center justify-center gap-2 cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
+                  >
+                    <Trash2 className="h-5 w-5 " />
+                    Delete
+                  </button>
+                )}
               </div>
-              {user.role !== "admin" && (
-                <button
-                  onClick={() => handleDeleteUser(user._id)}
-                  className="flex items-center justify-center gap-2 cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
-                >
-                  <Trash2 className="h-5 w-5 " />
-                  Delete
-                </button>
-              )}
-            </div>
-          ))}
+            );
+
+            return isCompany ? (
+              <Link
+                key={user._id}
+                href={`/dashboard/users/${user._id}`}
+                className="block"
+                prefetch={false}
+              >
+                {userCard}
+              </Link>
+            ) : (
+              userCard
+            );
+          })}
         </div>
       )}
     </div>
