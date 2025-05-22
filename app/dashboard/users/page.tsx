@@ -8,9 +8,14 @@ import { Trash2 } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import defaultUser from "@/public/default-user.jpg";
+
 export default function UsersPage() {
   const { getAllUsers, deleteUser, user, loading } = useAuth();
   const [usersList, setUsers] = useState<User[]>([]);
+  const [sortAsc, setSortAsc] = useState(true);
+  const [roleFilter, setRoleFilter] = useState<"all" | "company" | "student">(
+    "all"
+  );
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -42,6 +47,18 @@ export default function UsersPage() {
     }
   }
 
+  // Filter and sort logic
+  const filteredUsers = usersList
+    .filter((user) => {
+      if (roleFilter === "all") return true;
+      return user.role === roleFilter;
+    })
+    .sort((a, b) => {
+      if (a.name < b.name) return sortAsc ? -1 : 1;
+      if (a.name > b.name) return sortAsc ? 1 : -1;
+      return 0;
+    });
+
   if (user?.role !== "admin") {
     return (
       <div className="flex flex-col items-center justify-center h-[65vh] px-4 text-center">
@@ -69,13 +86,34 @@ export default function UsersPage() {
         InternHub Users
       </h2>
 
+      {/* Sort and Filter Controls */}
+      <div className="flex flex-wrap gap-4 mb-6 px-4">
+        <button
+          onClick={() => setSortAsc((prev) => !prev)}
+          className="px-4 py-2 bg-primary text-white rounded hover:bg-secondary transition"
+        >
+          Sort by Name {sortAsc ? "▲" : "▼"}
+        </button>
+        <select
+          value={roleFilter}
+          onChange={(e) =>
+            setRoleFilter(e.target.value as "all" | "company" | "student")
+          }
+          className="px-4 py-2 rounded bg-gray-800 text-white border border-gray-700"
+        >
+          <option value="all">All</option>
+          <option value="company">Company</option>
+          <option value="student">Student</option>
+        </select>
+      </div>
+
       {loading ? (
         <div>
           <Spinner text="loading users" />
         </div>
       ) : (
         <div className="grid gap-4 px-4">
-          {usersList.map((user) => {
+          {filteredUsers.map((user) => {
             const isCompany = user.role === "company";
             const userCard = (
               <div
