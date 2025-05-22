@@ -16,6 +16,7 @@ export default function UsersPage() {
   const [roleFilter, setRoleFilter] = useState<"all" | "company" | "student">(
     "all"
   );
+  const [search, setSearch] = useState(""); 
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -47,11 +48,19 @@ export default function UsersPage() {
     }
   }
 
-  // Filter and sort logic
+  // Filter, search, and sort logic
   const filteredUsers = usersList
     .filter((user) => {
       if (roleFilter === "all") return true;
       return user.role === roleFilter;
+    })
+    .filter((user) => {
+      if (!search.trim()) return true;
+      const lower = search.toLowerCase();
+      return (
+        user.name.toLowerCase().includes(lower) ||
+        user.email.toLowerCase().includes(lower)
+      );
     })
     .sort((a, b) => {
       if (a.name < b.name) return sortAsc ? -1 : 1;
@@ -86,8 +95,15 @@ export default function UsersPage() {
         InternHub Users
       </h2>
 
-      {/* Sort and Filter Controls */}
+      {/* Sort, Filter, and Search Controls */}
       <div className="flex flex-wrap gap-4 mb-6 px-4">
+        <input
+          type="text"
+          placeholder="Search by name or email"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="px-4 py-2 rounded bg-gray-800 text-white border border-gray-700 flex-1 min-w-[200px]"
+        />
         <button
           onClick={() => setSortAsc((prev) => !prev)}
           className="px-4 py-2 bg-primary text-white rounded hover:bg-secondary transition"
