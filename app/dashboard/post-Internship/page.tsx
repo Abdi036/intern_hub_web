@@ -123,6 +123,9 @@ export default function PostInternshipPage() {
         className="space-y-6 bg-card shadow p-6 rounded-md"
       >
         <div className="space-y-4">
+          <label className="block text-white font-medium text-sm mb-1">
+            Internship Title <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             name="title"
@@ -132,6 +135,10 @@ export default function PostInternshipPage() {
             onChange={handleChange}
             className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
           />
+
+          <label className="block text-white font-medium text-sm mb-1">
+            Company Name <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             required
@@ -141,6 +148,10 @@ export default function PostInternshipPage() {
             onChange={handleChange}
             className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
           />
+
+          <label className="block text-white font-medium text-sm mb-1">
+            Department <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             name="department"
@@ -157,7 +168,7 @@ export default function PostInternshipPage() {
                 htmlFor="startDate"
                 className="block text-white font-medium text-sm mb-1"
               >
-                Start Date:
+                Start Date: <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
@@ -173,7 +184,7 @@ export default function PostInternshipPage() {
                 htmlFor="endDate"
                 className="block text-white font-medium text-sm mb-1"
               >
-                End Date:
+                End Date: <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
@@ -186,6 +197,9 @@ export default function PostInternshipPage() {
             </div>
           </div>
 
+          <label className="block text-white font-medium text-sm mb-1">
+            Internship Description <span className="text-red-500">*</span>
+          </label>
           <textarea
             name="description"
             placeholder="Internship Description"
@@ -196,6 +210,9 @@ export default function PostInternshipPage() {
             rows={5}
           />
 
+          <label className="block text-white font-medium text-sm mb-1">
+            Location <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             name="location"
@@ -232,6 +249,9 @@ export default function PostInternshipPage() {
             </label>
           </div>
 
+          <label className="block text-white font-medium text-sm mb-1">
+            Number of Positions <span className="text-red-500">*</span>
+          </label>
           <input
             type="number"
             name="numPositions"
@@ -247,7 +267,7 @@ export default function PostInternshipPage() {
             htmlFor="applicationDeadline"
             className="text-white font-medium text-sm block"
           >
-            Application Deadline:
+            Application Deadline: <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
@@ -258,6 +278,9 @@ export default function PostInternshipPage() {
             className="w-full border-gray-800 rounded px-4 py-2 bg-gray-800 text-white"
           />
 
+          <label className="block text-white font-medium text-sm mb-1">
+            Company ID
+          </label>
           <input
             type="text"
             name="companyId"
@@ -269,7 +292,9 @@ export default function PostInternshipPage() {
 
           {/* Required Skills Section */}
           <div>
-            <label className="font-medium text-white">Required Skills</label>
+            <label className="font-medium text-white">
+              Required Skills <span className="text-red-500">*</span>
+            </label>
             <div className="flex flex-wrap gap-2 my-2">
               {formData.requiredSkills.map((skill) => (
                 <span

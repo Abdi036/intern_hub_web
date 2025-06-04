@@ -70,7 +70,7 @@ export default function Page() {
           <h1 className="text-2xl font-bold text-gray-200">Upload Document</h1>
         </div>
         <p className="text-gray-400 mt-2">
-          Upload your PDF files and portfolio information
+          Upload your CoverLetter or Proposal Letter In PDF format.
         </p>
 
         {/* Form */}
