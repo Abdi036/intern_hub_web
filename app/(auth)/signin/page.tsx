@@ -78,7 +78,7 @@ export default function Signin() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 sm:text-sm"
+                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 sm:text-sm sm:text-black"
               />
             </div>
 
@@ -101,13 +101,13 @@ export default function Signin() {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? "text" : "password"} // TOGGLE
+                  type={showPassword ? "text" : "password"}  
                   autoComplete="current-password"
                   required
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter your password"
-                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 sm:text-sm pr-10"
+                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-white placeholder-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 sm:text-sm pr-10 sm:text-black"
                 />
                 <button
                   type="button"
