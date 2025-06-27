@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardSidebar } from "../_components/dashboard-sidebar";
 import { useAuth } from "../_context/AuthContext";
 import { X } from "lucide-react";
@@ -15,6 +15,12 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const userName = user?.name.split(" ")[0];
 
+  // Close sidebar by default on mobile
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) setSidebarOpen(false);
+  }, []);
+
   return (
     <div className="flex min-h-screen bg-gray-900">
       {/* Fixed Sidebar */}
@@ -27,6 +33,9 @@ export default function DashboardLayout({
           userRole={user?.role as "student" | "company" | "admin"}
           userName={user?.name || "User"}
           userPhoto={user?.photo || "default-user.jpg"}
+          onLinkClick={() => {
+            if (window.innerWidth < 768) setSidebarOpen(false);
+          }}
         />
       </div>
 

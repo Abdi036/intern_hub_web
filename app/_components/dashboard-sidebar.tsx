@@ -21,11 +21,13 @@ interface DashboardSidebarProps {
   userRole: "student" | "company" | "admin";
   userName: string;
   userPhoto?: string;
+  onLinkClick?: () => void;
 }
 
 export function DashboardSidebar({
   userRole,
   userName,
+  onLinkClick,
 }: DashboardSidebarProps) {
   const { signOut, user } = useAuth();
   const router = useRouter();
@@ -123,6 +125,7 @@ export function DashboardSidebar({
                     ? "bg-slate-600 text-white"
                     : "text-gray-300 hover:bg-slate-600"
                 }`}
+                onClick={onLinkClick}
               >
                 <item.icon className="h-4 w-4" />
                 {item.title}
