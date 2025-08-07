@@ -87,7 +87,6 @@ export default function UploadImagePage() {
                 <label className="px-4 py-2 bg-primary hover:bg-secondary rounded-md cursor-pointer transition">
                   <span>Browse Files</span>
                   <input
-                    disabled={user?.approved === "pending"}
                     type="file"
                     accept="image/*"
                     className="hidden disabled:cursor-not-allowed"
